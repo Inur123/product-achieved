@@ -12,14 +12,14 @@
                     <a href="#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="#products" class="text-dark hover:text-primary font-semibold">Books</a>
-                    <a href="#transaksi" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
+                    <a href="{{ url('/cek-transaksi') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @else
                     <!-- Jika sedang di halaman lain, arahkan ke Home terlebih dahulu -->
                     <a href="{{ url('/') }}#hero" class="text-dark hover:text-primary font-semibold">Home</a>
                     <a href="{{ url('/') }}#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="{{ url('/') }}#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="{{ url('/') }}#products" class="text-dark hover:text-primary font-semibold">Books</a>
-                    <a href="{{ url('/') }}#transaksi" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
+                    <a href="{{ url('/cek-transaksi') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @endif
             </nav>
             <div class="flex items-center space-x-4">
@@ -121,7 +121,7 @@
             >Books</a
         >
         <a
-        href="#transaksi"
+        href="/cek-transaksi"
         class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100"
         >Cek Transaksi</a
     >

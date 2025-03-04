@@ -55,7 +55,9 @@
 
     <!-- Header -->
     @include('frontend.layouts.navbar')
+   
     @yield('content')
+
     <!-- Footer -->
     @include('frontend.layouts.footer')
 
