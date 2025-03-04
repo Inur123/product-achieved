@@ -12,12 +12,14 @@
                     <a href="#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="#products" class="text-dark hover:text-primary font-semibold">Books</a>
+                    <a href="#transaksi" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @else
                     <!-- Jika sedang di halaman lain, arahkan ke Home terlebih dahulu -->
                     <a href="{{ url('/') }}#hero" class="text-dark hover:text-primary font-semibold">Home</a>
                     <a href="{{ url('/') }}#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="{{ url('/') }}#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="{{ url('/') }}#products" class="text-dark hover:text-primary font-semibold">Books</a>
+                    <a href="{{ url('/') }}#transaksi" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @endif
             </nav>
             <div class="flex items-center space-x-4">
@@ -78,7 +80,7 @@
 >
     <div class="flex justify-between items-center mb-8">
         <div class="text-2xl font-extrabold text-primary">
-            <img src="{{ asset('logo.png') }}" alt="KiddiBooks Logo" class="h-12 w-auto">
+
         </div>
         <button id="close-menu-button" class="text-gray-500 focus:outline-none">
             <svg
@@ -118,6 +120,11 @@
             class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100"
             >Books</a
         >
+        <a
+        href="#transaksi"
+        class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100"
+        >Cek Transaksi</a
+    >
     </nav>
     <div class="mt-auto">
         <a
@@ -198,33 +205,6 @@
         });
     });
 
-    // Mobile menu functionality
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const closeMenuButton = document.getElementById('close-menu-button');
-    const menuOverlay = document.getElementById('menu-overlay');
 
-    if (mobileMenuButton && mobileMenu && closeMenuButton && menuOverlay) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.add('translate-x-0');
-            menuOverlay.classList.remove('hidden');
-            menuOverlay.classList.remove('opacity-0');
-            menuOverlay.classList.add('opacity-50');
-        });
-
-        closeMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.remove('translate-x-0');
-            menuOverlay.classList.add('hidden');
-            menuOverlay.classList.remove('opacity-50');
-            menuOverlay.classList.add('opacity-0');
-        });
-
-        menuOverlay.addEventListener('click', () => {
-            mobileMenu.classList.remove('translate-x-0');
-            menuOverlay.classList.add('hidden');
-            menuOverlay.classList.remove('opacity-50');
-            menuOverlay.classList.add('opacity-0');
-        });
-    }
 
 </script>

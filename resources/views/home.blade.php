@@ -2,10 +2,10 @@
 
 
 <!-- Hero Section -->
-<section class="bg-gradient-to-r from-primary to-secondary py-16 pt-24" id="hero">
+<section class="bg-gradient-to-r from-primary to-secondary py-16 pt-24" id="hero" data-aos="fade-up">
     <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 text-white mb-8 md:mb-0">
+            <div class="md:w-1/2 text-white mb-8 md:mb-0"  data-aos="fade-right" data-aos-delay="100">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
                     Discover the Joy of Reading with KiddiBooks!
                 </h1>
@@ -22,17 +22,17 @@
                         More</a>
                 </div>
             </div>
-            <div class="md:w-1/2">
-                <img src="1.jpeg" alt="Children reading books"
-                    class="rounded-lg shadow-xl" />
+            <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                <img src="b.png" alt="Children reading books"
+                    class="" />
             </div>
         </div>
     </div>
 </section>
 <!-- Promo Section -->
-<section id="promo" class="py-16 bg-white">
+<section id="promo" class="py-16 bg-white" data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8" data-aos="fade-down" data-aos-delay="100">
             <h2 class="text-3xl font-bold">Special Promotions</h2>
             <div class="bg-primary text-white px-4 py-2 rounded-full font-bold animate-pulse">
                 Limited Time Offers!
@@ -42,7 +42,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Promo Book 1 -->
             <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
                     <div
@@ -73,7 +73,7 @@
 
             <!-- Promo Book 2 -->
             <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="200">
                 <div class="relative">
                     <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
                     <div
@@ -104,7 +104,7 @@
 
             <!-- Promo Book 3 -->
             <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="300">
                 <div class="relative">
                     <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
                     <div
@@ -135,7 +135,7 @@
 
             <!-- Promo Book 4 -->
             <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="400">
                 <div class="relative">
                     <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
                     <div
@@ -165,7 +165,7 @@
             </div>
         </div>
 
-        <div class="text-center mt-8">
+        <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="100">
             <a href="#"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">View
                 All Promotions</a>
@@ -173,12 +173,12 @@
     </div>
 </section>
 <!-- Categories Section -->
-<section id="categories" class="py-16 bg-gray-50">
+<section id="categories" class="py-16 bg-gray-50" data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Explore Categories</h2>
+        <h2 class="text-3xl font-bold text-center mb-12" data-aos="fade-down">Explore Categories</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <!-- IELTS Category -->
-            <div class="category-card bg-blue-100 rounded-xl p-6 text-center transition duration-300 shadow-md">
+            <div class="category-card bg-blue-100 rounded-xl p-6 text-center transition duration-300 shadow-md" data-aos="fade-up" data-aos-delay="100">
                 <div class="bg-blue-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +193,7 @@
             </div>
 
             <!-- STEAM Kids Category -->
-            <div class="category-card bg-green-100 rounded-xl p-6 text-center transition duration-300 shadow-md">
+            <div class="category-card bg-green-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="200">
                 <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -208,7 +208,7 @@
             </div>
 
             <!-- Promo Category -->
-            <div class="category-card bg-red-100 rounded-xl p-6 text-center transition duration-300 shadow-md">
+            <div class="category-card bg-red-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="300">
                 <div class="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -223,7 +223,7 @@
             </div>
 
             <!-- TOEFL Category -->
-            <div class="category-card bg-purple-100 rounded-xl p-6 text-center transition duration-300 shadow-md">
+            <div class="category-card bg-purple-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="400">
                 <div class="bg-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -238,7 +238,7 @@
             </div>
 
             <!-- All Books Category -->
-            <div class="category-card bg-yellow-100 rounded-xl p-6 text-center transition duration-300 shadow-md">
+            <div class="category-card bg-yellow-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="500">
                 <div class="bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -255,15 +255,15 @@
 </section>
 
 <!-- Featured Products Section -->
-<section id="products" class="py-16 bg-white">
+<section id="products" class="py-16 bg-white" data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-4">Featured E-Books</h2>
-        <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Discover our most popular educational e-books that
+        <h2 class="text-3xl font-bold text-center mb-4"data-aos="fade-down">Featured E-Books</h2>
+        <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto"data-aos="fade-down" data-aos-delay="100">Discover our most popular educational e-books that
             children love and parents trust.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <!-- Book 1 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="IELTS Junior Prep"
                         class="w-full h-48 object-cover">
@@ -282,7 +282,7 @@
             </div>
 
             <!-- Book 2 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="Science Experiments at Home"
                         class="w-full h-48 object-cover">
@@ -301,7 +301,7 @@
             </div>
 
             <!-- Book 3 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="TOEFL Vocabulary Builder"
                         class="w-full h-48 object-cover">
@@ -320,7 +320,7 @@
             </div>
 
             <!-- Book 4 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="Art & Craft Projects"
                         class="w-full h-48 object-cover">
@@ -341,7 +341,7 @@
             </div>
 
             <!-- Book 5 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
                 <div class="relative">
                     <img src="1.jpeg" alt="Coding for Kids"
                         class="w-full h-48 object-cover">
@@ -417,7 +417,7 @@
             </div>
         </div>
 
-        <div class="text-center mt-12">
+        <div class="text-center mt-12"data-aos="fade-up" data-aos-delay="100">
             <a href="#"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">View
                 All E-Books</a>
@@ -426,11 +426,11 @@
 </section>
 
 <!-- Testimonials -->
-<section class="py-16 bg-gray-50">
+<section class="py-16 bg-gray-50"data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">What Parents & Teachers Say</h2>
+        <h2 class="text-3xl font-bold text-center mb-12"  data-aos="fade-down">What Parents & Teachers Say</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white p-6 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="100">
                 <div class="flex items-center mb-4">
                     <div
                         class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
@@ -466,7 +466,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white p-6 rounded-lg shadow-md"data-aos="fade-up" data-aos-delay="200">
                 <div class="flex items-center mb-4">
                     <div
                         class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold text-xl">
@@ -502,7 +502,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white p-6 rounded-lg shadow-md"data-aos="fade-up" data-aos-delay="300">
                 <div class="flex items-center mb-4">
                     <div
                         class="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-xl">
@@ -542,9 +542,9 @@
 </section>
 
 <!-- Newsletter -->
-<section class="py-16">
+<section class="py-16" data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto bg-primary rounded-lg shadow-lg p-10 text-center">
+        <div class="max-w-3xl mx-auto bg-primary rounded-lg shadow-lg p-10 text-center" data-aos="zoom-in">
             <h2 class="text-3xl font-bold text-black mb-4">Join Our Newsletter</h2>
             <p class="text-white opacity-90 mb-8">
                 Stay updated with new releases, special offers, and educational tips for your children.
