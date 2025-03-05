@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class ProductController extends Controller
 {
@@ -16,7 +18,9 @@ class ProductController extends Controller
     {
         $products = Product::with('category')->paginate(10); // Pastikan category ikut dimuat
         $categories = Category::all(); // Ambil semua kategori dari database
-        return view('backend.products.index', compact('products', 'categories'));
+
+        $code_product = 'ACH-' . strtoupper(Str::random(5)); // Generate random code
+        return view('backend.products.index', compact('products', 'categories', 'code_product'));
     }
 
 
@@ -26,24 +30,26 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code_product' => 'required|unique:products',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'required',
-            'category_id' => 'required|exists:categories,id', // Perbaikan validasi, cek kategori berdasarkan ID
+            'category_id' => 'required|exists:categories,id',
             'harga' => 'required|numeric',
             'status' => 'required|in:active,nonactive'
         ]);
 
+        // Membuat code_product otomatis dengan awalan "ACH-" dan 5 karakter acak
+        $code_product = 'ACH-' . strtoupper(Str::random(5));
+
         // Menyimpan gambar jika ada
         $imagePath = $request->file('image') ? $request->file('image')->store('products', 'public') : null;
 
-        // Membuat produk baru dengan category_id
+        // Membuat produk baru dengan category_id dan code_product otomatis
         Product::create([
-            'code_product' => $request->code_product,
+            'code_product' => $code_product, // Menambahkan code_product otomatis
             'image' => $imagePath,
             'name' => $request->name,
             'description' => $request->description,
-            'category_id' => $request->category_id, // Gunakan category_id untuk relasi
+            'category_id' => $request->category_id,
             'harga' => $request->harga,
             'status' => $request->status
         ]);

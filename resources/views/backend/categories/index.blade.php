@@ -28,134 +28,64 @@
             </button>
         </div>
         <!-- Category Table -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="px-6 py-3 text-left  text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Nama</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Deskripsi</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach ($categories as $index => $category)
-                            <tr>
-
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    {{ $index + 1 }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    {{ $category->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    {{ $category->description }}</td>
-
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button class="text-blue-500 hover:text-opacity-70 mr-3 view-category-btn"
-                                        data-id="{{ $category->id }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
-                                        </svg>
-                                    </button>
-                                    <button class="text-secondary hover:text-opacity-70 mr-3 edit-category-btn"
-                                        data-id="{{ $category->id }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </button>
-                                    <button class="text-red-500 hover:text-opacity-70 delete-category-btn"
-                                        data-id="{{ $category->id }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-sm text-gray-600">Showing
-                    {{ ($categories->currentPage() - 1) * $categories->perPage() + 1 }}-{{ min($categories->currentPage() * $categories->perPage(), $categories->total()) }}
-                    of {{ $categories->total() }} Categories</p>
-                <div class="flex space-x-2">
-                    <a href="{{ $categories->previousPageUrl() }}"
-                        class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $categories->onFirstPage() ? 'disabled' : '' }}">Previous</a>
-
-                    @php
-                        $start = max($categories->currentPage() - 2, 1);
-                        $end = min($start + 4, $categories->lastPage());
-
-                        if ($end - $start < 4 && $categories->lastPage() > 5) {
-                            $start = max($categories->lastPage() - 4, 1);
-                            $end = $categories->lastPage();
-                        }
-                    @endphp
-
-                    @if ($start > 1)
-                        <a href="{{ $categories->url(1) }}"
-                            class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">1</a>
-                        @if ($start > 2)
-                            <span class="px-3 py-1 text-gray-600">...</span>
-                        @endif
-                    @endif
-
-                    @for ($i = $start; $i <= $end; $i++)
-                        <a href="{{ $categories->url($i) }}"
-                            class="px-3 py-1 rounded {{ $categories->currentPage() == $i ? 'bg-primary text-white' : 'border border-gray-300 text-gray-600 hover:bg-gray-50' }}">{{ $i }}</a>
-                    @endfor
-
-                    @if ($end < $categories->lastPage())
-                        @if ($end < $categories->lastPage() - 1)
-                            <span class="px-3 py-1 text-gray-600">...</span>
-                        @endif
-                        <a href="{{ $categories->url($categories->lastPage()) }}"
-                            class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">{{ $categories->lastPage() }}</a>
-                    @endif
-
-                    <a href="{{ $categories->nextPageUrl() }}"
-                        class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $categories->hasMorePages() ? '' : 'disabled' }}">Next</a>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach ($categories as $index => $category)
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div class="p-6 flex items-start space-x-4">
+                        <!-- Category Icon/Badge -->
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <!-- Category Name -->
+                            <h3 class="text-lg font-bold text-gray-800">{{ $category->name }}</h3>
+                            <!-- Category Description -->
+                            <p class="text-gray-600 text-sm mt-1">{{ $category->description }}</p>
+                            <div class="mt-4 flex items-center text-sm text-gray-500">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                    {{ $category->products->count() }} Products
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-gray-50 flex justify-end space-x-2">
+                        <!-- Edit Button -->
+                        <button class="text-secondary hover:text-opacity-70 edit-category-btn" data-id="{{ $category->id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <!-- Delete Button -->
+                        <button class="text-red-500 hover:text-opacity-70 delete-category-btn" data-id="{{ $category->id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
-
         <!-- Add Category Modal -->
         <div id="add-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg shadow-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-800">Add New Category</h3>
                         <button id="close-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <form id="category-form" action="{{ route('categories.store') }}" method="POST"
-                        enctype="multipart/form-data" class="space-y-4">
+                    <form id="category-form" action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}"
-                                placeholder="Enter category name"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                required>
+                            <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="Enter category name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
                         </div>
 
                         <div>
@@ -163,26 +93,19 @@
                             <textarea name="description" id="description" rows="3" placeholder="Enter category description"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">{{ old('description') }}</textarea>
                         </div>
-
                         <div class="flex justify-end space-x-4 pt-4">
-                            <button type="button" id="cancel-add"
-                                class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                            <button type="submit"
-                                class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Save
-                                Category</button>
+                            <button type="button" id="cancel-add" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Save Category</button>
                         </div>
                     </form>
-
-
-
                 </div>
             </div>
         </div>
+
         <!-- Edit Category Modal -->
         <div id="edit-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg shadow-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-800">Edit Category</h3>
@@ -194,8 +117,7 @@
                             </svg>
                         </button>
                     </div>
-                    <form id="edit-category-form" action="" method="POST" enctype="multipart/form-data"
-                        class="space-y-4">
+                    <form id="edit-category-form" action="" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         @method('PUT')
 
@@ -216,14 +138,13 @@
                             <button type="button" id="cancel-edit"
                                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
                             <button type="submit"
-                                class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Update
-                                Category</button>
+                                class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Update Category</button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
+
         <!-- Detail category Modal -->
         <div id="detail-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -456,7 +377,7 @@
                             text: "You won't be able to revert this!",
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
+                            confirmButtonColor: '#2A6B96',
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Yes, delete it!'
                         }).then((result) => {
