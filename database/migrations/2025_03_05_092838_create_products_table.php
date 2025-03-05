@@ -17,11 +17,12 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('category');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->decimal('harga', 10, 2);
             $table->enum('status', ['active', 'nonactive'])->default('active');
             $table->timestamps();
         });
+
     }
 
     /**

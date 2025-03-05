@@ -43,7 +43,7 @@
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status</th>
@@ -65,11 +65,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $product->name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">{{ $product->category }}</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                        {{ $product->category->name ?? 'No Category' }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    ${{ number_format($product->harga, 2) }}</td>
+                                    Rp. {{ number_format($product->harga, 2) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="px-2 py-1 text-xs font-medium rounded-full {{ $product->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $product->status }}</span>
@@ -77,9 +77,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button class="text-blue-500 hover:text-opacity-70 mr-3 view-product-btn"
                                         data-id="{{ $product->id }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
-                                          </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
+                                        </svg>
                                     </button>
                                     <button class="text-secondary hover:text-opacity-70 mr-3 edit-product-btn"
                                         data-id="{{ $product->id }}">
@@ -89,9 +91,12 @@
                                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                         </svg>
                                     </button>
-                                    <button class="text-red-500 hover:text-opacity-70 delete-product-btn" data-id="{{ $product->id }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    <button class="text-red-500 hover:text-opacity-70 delete-product-btn"
+                                        data-id="{{ $product->id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
                                 </td>
@@ -101,9 +106,12 @@
                 </table>
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-sm text-gray-600">Showing {{ ($products->currentPage() - 1) * $products->perPage() + 1 }}-{{ min($products->currentPage() * $products->perPage(), $products->total()) }} of {{ $products->total() }} products</p>
+                <p class="text-sm text-gray-600">Showing
+                    {{ ($products->currentPage() - 1) * $products->perPage() + 1 }}-{{ min($products->currentPage() * $products->perPage(), $products->total()) }}
+                    of {{ $products->total() }} products</p>
                 <div class="flex space-x-2">
-                    <a href="{{ $products->previousPageUrl() }}" class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $products->onFirstPage() ? 'disabled' : '' }}">Previous</a>
+                    <a href="{{ $products->previousPageUrl() }}"
+                        class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $products->onFirstPage() ? 'disabled' : '' }}">Previous</a>
 
                     @php
                         $start = max($products->currentPage() - 2, 1);
@@ -116,24 +124,28 @@
                     @endphp
 
                     @if ($start > 1)
-                        <a href="{{ $products->url(1) }}" class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">1</a>
+                        <a href="{{ $products->url(1) }}"
+                            class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">1</a>
                         @if ($start > 2)
                             <span class="px-3 py-1 text-gray-600">...</span>
                         @endif
                     @endif
 
                     @for ($i = $start; $i <= $end; $i++)
-                        <a href="{{ $products->url($i) }}" class="px-3 py-1 rounded {{ $products->currentPage() == $i ? 'bg-primary text-white' : 'border border-gray-300 text-gray-600 hover:bg-gray-50' }}">{{ $i }}</a>
+                        <a href="{{ $products->url($i) }}"
+                            class="px-3 py-1 rounded {{ $products->currentPage() == $i ? 'bg-primary text-white' : 'border border-gray-300 text-gray-600 hover:bg-gray-50' }}">{{ $i }}</a>
                     @endfor
 
                     @if ($end < $products->lastPage())
                         @if ($end < $products->lastPage() - 1)
                             <span class="px-3 py-1 text-gray-600">...</span>
                         @endif
-                        <a href="{{ $products->url($products->lastPage()) }}" class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">{{ $products->lastPage() }}</a>
+                        <a href="{{ $products->url($products->lastPage()) }}"
+                            class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">{{ $products->lastPage() }}</a>
                     @endif
 
-                    <a href="{{ $products->nextPageUrl() }}" class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $products->hasMorePages() ? '' : 'disabled' }}">Next</a>
+                    <a href="{{ $products->nextPageUrl() }}"
+                        class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $products->hasMorePages() ? '' : 'disabled' }}">Next</a>
                 </div>
             </div>
         </div>
@@ -189,13 +201,13 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                <select name="category" id="category"
+                                <select name="category_id" id="category_id"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                     required>
                                     <option value="">Select a category</option>
-                                    <option value="ielts">IELTS</option>
-                                    <option value="steam">STEAM</option>
-                                    <option value="toefl">TOEFL</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -288,13 +300,10 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                 <select name="category" id="edit-category"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                    required>
-                                    <option value="">Select a category</option>
-                                    <option value="ielts">IELTS</option>
-                                    <option value="steam">STEAM</option>
-                                    <option value="toefl">TOEFL</option>
-                                </select>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                required>
+                                <!-- Opsi kategori akan diisi oleh JavaScript -->
+                            </select>
                             </div>
                         </div>
                         <div>
@@ -505,20 +514,46 @@
                         fetch(`/products/${productId}/edit`)
                             .then(response => response.json())
                             .then(data => {
-                                document.getElementById('edit-code_product').value = data
-                                    .code_product;
-                                document.getElementById('edit-name').value = data.name;
-                                document.getElementById('edit-description').value = data
-                                    .description;
-                                document.getElementById('edit-harga').value = data.harga;
-                                document.getElementById('edit-category').value = data.category;
-                                document.getElementById('edit-status').value = data.status;
-                                document.getElementById('edit-image-preview').src =
-                                    `{{ asset('storage/') }}/${data.image}`;
-                                document.getElementById('edit-image-preview').classList.remove(
-                                    'hidden');
-                                document.getElementById('edit-product-form').action =
-                                    `/products/${productId}`;
+                                const product = data.product;
+                                const categories = data.categories;
+
+                                // Isi form dengan data produk
+                                document.getElementById('edit-code_product').value = product.code_product;
+                                document.getElementById('edit-name').value = product.name;
+                                document.getElementById('edit-description').value = product.description;
+                                document.getElementById('edit-harga').value = product.harga;
+                                document.getElementById('edit-status').value = product.status;
+                                document.getElementById('edit-image-preview').src = `{{ asset('storage/') }}/${product.image}`;
+                                document.getElementById('edit-image-preview').classList.remove('hidden');
+
+                                // Isi dropdown category
+                                const categorySelect = document.getElementById('edit-category');
+                                categorySelect.innerHTML = ''; // Kosongkan dropdown terlebih dahulu
+
+                                // Tambahkan opsi default
+                                const defaultOption = document.createElement('option');
+                                defaultOption.value = '';
+                                defaultOption.textContent = 'Select a category';
+                                categorySelect.appendChild(defaultOption);
+
+                                // Tambahkan opsi kategori
+                                categories.forEach(category => {
+                                    const option = document.createElement('option');
+                                    option.value = category.id;
+                                    option.textContent = category.name;
+
+                                    // Tandai kategori yang dipilih
+                                    if (category.id == product.category_id) {
+                                        option.selected = true;
+                                    }
+
+                                    categorySelect.appendChild(option);
+                                });
+
+                                // Set action form
+                                document.getElementById('edit-product-form').action = `/products/${productId}`;
+
+                                // Tampilkan modal
                                 editProductModal.classList.remove('hidden');
                             });
                     });
@@ -577,13 +612,19 @@
                         fetch(`/products/${productId}`)
                             .then(response => response.json())
                             .then(data => {
-                                document.getElementById('detail-code_product').textContent = data.code_product;
+                                document.getElementById('detail-code_product').textContent =
+                                    data.code_product;
                                 document.getElementById('detail-name').textContent = data.name;
-                                document.getElementById('detail-description').textContent = data.description;
-                                document.getElementById('detail-harga').textContent = `Rp ${data.harga.toLocaleString()}`;
-                                document.getElementById('detail-category').textContent = data.category;
-                                document.getElementById('detail-status').textContent = data.status;
-                                document.getElementById('detail-image-preview').src = `{{ asset('storage/') }}/${data.image}`;
+                                document.getElementById('detail-description').textContent = data
+                                    .description;
+                                document.getElementById('detail-harga').textContent =
+                                    `Rp ${data.harga.toLocaleString()}`;
+                                document.getElementById('detail-category').textContent = data
+                                    .category;
+                                document.getElementById('detail-status').textContent = data
+                                    .status;
+                                document.getElementById('detail-image-preview').src =
+                                    `{{ asset('storage/') }}/${data.image}`;
                                 detailProductModal.classList.remove('hidden');
                             });
                     });
@@ -638,40 +679,40 @@
                             if (result.isConfirmed) {
                                 // Kirim request delete ke server
                                 fetch(`/products/${productId}`, {
-                                    method: 'DELETE',
-                                    headers: {
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                        'Content-Type': 'application/json'
-                                    }
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        // Tampilkan notifikasi sukses
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Deleted!',
-                                            text: data.message,
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        }).then(() => {
-                                            // Reload halaman setelah penghapusan
-                                            window.location.reload();
-                                        });
-                                    } else {
-                                        // Tampilkan notifikasi error
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Failed!',
-                                            text: data.message,
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                });
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Content-Type': 'application/json'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Tampilkan notifikasi sukses
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Deleted!',
+                                                text: data.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            }).then(() => {
+                                                // Reload halaman setelah penghapusan
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            // Tampilkan notifikasi error
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Failed!',
+                                                text: data.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                    });
                             }
                         });
                     });
