@@ -89,11 +89,9 @@
                                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                         </svg>
                                     </button>
-                                    <button class="text-red-500 hover:text-opacity-70">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    <button class="text-red-500 hover:text-opacity-70 delete-product-btn" data-id="{{ $product->id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
                                 </td>
@@ -612,6 +610,71 @@
                     if (event.target === detailProductModal) {
                         detailProductModal.classList.add('hidden');
                     }
+                });
+            }
+        });
+    </script>
+    {{-- destroy --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tangani tombol delete
+            const deleteButtons = document.querySelectorAll('.delete-product-btn');
+
+            if (deleteButtons) {
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-id');
+
+                        // Tampilkan konfirmasi SweetAlert2
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Kirim request delete ke server
+                                fetch(`/products/${productId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Tampilkan notifikasi sukses
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Deleted!',
+                                            text: data.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        }).then(() => {
+                                            // Reload halaman setelah penghapusan
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        // Tampilkan notifikasi error
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Failed!',
+                                            text: data.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                            }
+                        });
+                    });
                 });
             }
         });

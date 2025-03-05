@@ -71,7 +71,8 @@
                                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                         </svg>
                                     </button>
-                                    <button class="text-red-500 hover:text-opacity-70">
+                                    <button class="text-red-500 hover:text-opacity-70 delete-category-btn"
+                                        data-id="{{ $category->id }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -146,29 +147,24 @@
                         </button>
                     </div>
                     <form id="category-form" action="{{ route('categories.store') }}" method="POST"
-                        enctype="multipart/form-data" class="space-y-6 bg-white p-6 rounded-lg">
+                        enctype="multipart/form-data" class="space-y-4">
                         @csrf
-                        <!-- Input untuk Nama Kategori -->
-                        <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name Category
-                                </label>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
                             <input type="text" name="name" id="name" value="{{ old('name') }}"
                                 placeholder="Enter category name"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                 required>
                         </div>
 
-                        <!-- Input untuk Deskripsi -->
-                        <div class="mb-4">
-                            <label for="description"
-                                class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea name="description" id="description" rows="3" placeholder="Enter category description"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                >{{ old('description') }}</textarea>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">{{ old('description') }}</textarea>
                         </div>
 
-                        <!-- Tombol Aksi -->
-                        <div class="flex justify-end space-x-4">
+                        <div class="flex justify-end space-x-4 pt-4">
                             <button type="button" id="cancel-add"
                                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
                             <button type="submit"
@@ -176,6 +172,8 @@
                                 Category</button>
                         </div>
                     </form>
+
+
 
                 </div>
             </div>
@@ -200,20 +198,20 @@
                         class="space-y-4">
                         @csrf
                         @method('PUT')
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
-                                <input type="text" name="name" id="edit-name" placeholder="Enter category name"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                    required>
-                            </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                            <input type="text" name="name" id="edit-name" placeholder="Enter category name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                required>
                         </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea name="description" id="edit-description" rows="3" placeholder="Enter category description"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                ></textarea>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
                         </div>
+
                         <div class="flex justify-end space-x-4 pt-4">
                             <button type="button" id="cancel-edit"
                                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
@@ -222,19 +220,23 @@
                                 Category</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
         <!-- Detail category Modal -->
         <div id="detail-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
+            <div
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-800">Category Details</h3>
                         <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -251,7 +253,8 @@
                         </div>
                     </div>
                     <div class="flex justify-end space-x-4 pt-4">
-                        <button type="button" id="cancel-detail" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Close</button>
+                        <button type="button" id="cancel-detail"
+                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Close</button>
                     </div>
                 </div>
             </div>
@@ -388,52 +391,117 @@
             }
         });
     </script>
-   <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    // Tampilkan modal detail saat tombol detail diklik
-    const viewButtons = document.querySelectorAll('.view-category-btn');
-    const detailCategoryModal = document.getElementById('detail-category-modal');
-    const closeDetailModal = document.getElementById('close-detail-modal');
-    const cancelDetail = document.getElementById('cancel-detail');
+    {{-- detail --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tampilkan modal detail saat tombol detail diklik
+            const viewButtons = document.querySelectorAll('.view-category-btn');
+            const detailCategoryModal = document.getElementById('detail-category-modal');
+            const closeDetailModal = document.getElementById('close-detail-modal');
+            const cancelDetail = document.getElementById('cancel-detail');
 
-    if (viewButtons) {
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const categoryId = this.getAttribute('data-id');
-                fetch(`/categories/${categoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('detail-name').textContent = data.name;
-                        document.getElementById('detail-description').textContent = data.description;
-                        detailCategoryModal.classList.remove('hidden');
+            if (viewButtons) {
+                viewButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const categoryId = this.getAttribute('data-id');
+                        fetch(`/categories/${categoryId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('detail-name').textContent = data.name;
+                                document.getElementById('detail-description').textContent = data
+                                    .description;
+                                detailCategoryModal.classList.remove('hidden');
+                            });
                     });
-            });
-        });
-    }
+                });
+            }
 
-    if (cancelDetail) {
-        cancelDetail.addEventListener('click', function() {
-            detailCategoryModal.classList.add('hidden');
-        });
-    }
+            if (cancelDetail) {
+                cancelDetail.addEventListener('click', function() {
+                    detailCategoryModal.classList.add('hidden');
+                });
+            }
 
-    // Sembunyikan modal detail saat tombol close diklik
-    if (closeDetailModal) {
-        closeDetailModal.addEventListener('click', function() {
-            detailCategoryModal.classList.add('hidden');
-        });
-    }
+            // Sembunyikan modal detail saat tombol close diklik
+            if (closeDetailModal) {
+                closeDetailModal.addEventListener('click', function() {
+                    detailCategoryModal.classList.add('hidden');
+                });
+            }
 
-    // Sembunyikan modal detail saat mengklik di luar modal
-    if (detailCategoryModal) {
-        detailCategoryModal.addEventListener('click', function(event) {
-            if (event.target === detailCategoryModal) {
-                detailCategoryModal.classList.add('hidden');
+            // Sembunyikan modal detail saat mengklik di luar modal
+            if (detailCategoryModal) {
+                detailCategoryModal.addEventListener('click', function(event) {
+                    if (event.target === detailCategoryModal) {
+                        detailCategoryModal.classList.add('hidden');
+                    }
+                });
             }
         });
-    }
-});
+    </script>
+    {{-- Destror --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tangani tombol delete
+            const deleteButtons = document.querySelectorAll('.delete-category-btn');
 
-</script>
+            if (deleteButtons) {
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const categoryId = this.getAttribute('data-id');
 
+                        // Tampilkan konfirmasi SweetAlert2
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Kirim request delete ke server
+                                fetch(`/categories/${categoryId}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Content-Type': 'application/json'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Tampilkan notifikasi sukses
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Deleted!',
+                                                text: data.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            }).then(() => {
+                                                // Reload halaman setelah penghapusan
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            // Tampilkan notifikasi error
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Failed!',
+                                                text: data.message,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                    });
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    </script>
 @endsection
