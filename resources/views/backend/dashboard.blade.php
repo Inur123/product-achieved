@@ -18,7 +18,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Products</p>
-                    <p class="text-3xl font-bold text-gray-800">124</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalProducts }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-primary bg-opacity-10">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">

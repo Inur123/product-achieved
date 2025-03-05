@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('home');
@@ -30,7 +33,11 @@ Route::post('/register', [AuthController::class, 'register']);
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('backend.dashboard'); // Sesuaikan dengan halaman dashboard Anda
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+    Route::resource('products', ProductController::class);
+    Route::resource('categories', CategoryController::class);
+
 });
+

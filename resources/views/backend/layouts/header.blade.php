@@ -16,8 +16,8 @@
                 </button>
             </div>
             <div class="flex items-center">
-                <img src="/placeholder.svg?height=32&width=32" alt="Admin" class="h-8 w-8 rounded-full object-cover">
-                <span class="ml-2 text-sm font-medium text-gray-700 hidden md:inline-block">Admin User</span>
+                <img src="{{ asset('logo-2.png') }}" alt="Admin" class="h-8 w-8 rounded-full object-cover">
+                <span class="ml-2 text-sm font-medium text-gray-700 hidden md:inline-block">{{ auth()->user()->name }}</span>
             </div>
         </div>
     </div>
