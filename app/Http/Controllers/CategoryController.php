@@ -24,6 +24,8 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'icon' => 'nullable|string', // Pastikan icon dikirim dalam format teks
+
         ]);
 
         $category = Category::create($request->all());
@@ -47,6 +49,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'icon' => 'nullable|string', // Pastikan icon dikirim dalam format teks
         ]);
 
         $category->update($request->all());

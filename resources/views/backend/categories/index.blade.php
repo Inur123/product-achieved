@@ -34,9 +34,14 @@
                     <div class="p-6 flex items-start space-x-4">
                         <!-- Category Icon/Badge -->
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                            </svg>
+                            @if($category->icon)
+                                {!! $category->icon !!}
+                            @else
+                                <!-- Default Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                                </svg>
+                            @endif
                         </div>
                         <div class="flex-1">
                             <!-- Category Name -->
@@ -67,6 +72,7 @@
                 </div>
             @endforeach
         </div>
+
         <!-- Add Category Modal -->
         <div id="add-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -80,7 +86,7 @@
                             </svg>
                         </button>
                     </div>
-                    <form id="category-form" action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <form id="category-form" action="{{ route('categories.store') }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
@@ -93,6 +99,21 @@
                             <textarea name="description" id="description" rows="3" placeholder="Enter category description"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">{{ old('description') }}</textarea>
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Icon (SVG Code)</label>
+                            <textarea name="icon" id="icon" rows="3" placeholder="Paste SVG code here"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">{{ old('icon') }}</textarea>
+                            <p class="text-sm text-gray-500 mt-1">Example: <code>&lt;svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt; ... &lt;/svg&gt;</code></p>
+                        </div>
+
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Icon Preview</label>
+                            <div id="icon-preview" class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg p-2">
+                                <span class="text-gray-500">No icon</span>
+                            </div>
+                        </div>
+
                         <div class="flex justify-end space-x-4 pt-4">
                             <button type="button" id="cancel-add" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
                             <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Save Category</button>
@@ -102,6 +123,7 @@
             </div>
         </div>
 
+
         <!-- Edit Category Modal -->
         <div id="edit-category-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -110,10 +132,8 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-800">Edit Category</h3>
                         <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -134,6 +154,20 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
                         </div>
 
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Icon (SVG Code)</label>
+                            <textarea name="icon" id="edit-icon" rows="3" placeholder="Paste SVG code here"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            <p class="text-sm text-gray-500 mt-1">Example: <code>&lt;svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt; ... &lt;/svg&gt;</code></p>
+                        </div>
+
+                        <div class="mt-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Icon Preview</label>
+                            <div id="edit-icon-preview" class="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg p-2">
+                                <span class="text-gray-500">No icon</span>
+                            </div>
+                        </div>
+
                         <div class="flex justify-end space-x-4 pt-4">
                             <button type="button" id="cancel-edit"
                                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
@@ -141,42 +175,6 @@
                                 class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">Update Category</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detail category Modal -->
-        <div id="detail-category-modal" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">Category Details</h3>
-                        <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
-                                <p id="detail-name" class="text-sm text-gray-600"></p>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                            <p id="detail-description" class="text-sm text-gray-600"></p>
-                        </div>
-                    </div>
-                    <div class="flex justify-end space-x-4 pt-4">
-                        <button type="button" id="cancel-detail"
-                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Close</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -264,101 +262,92 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tampilkan modal edit saat tombol edit diklik
-            const editButtons = document.querySelectorAll('.edit-category-btn');
-            const editCategoryModal = document.getElementById('edit-category-modal');
-            const closeEditModal = document.getElementById('close-edit-modal');
-            const cancelEdit = document.getElementById('cancel-edit');
+            const iconInput = document.getElementById('icon');
+            const iconPreview = document.getElementById('icon-preview');
 
-            if (editButtons) {
-                editButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const categoryId = this.getAttribute('data-id');
-                        fetch(`/categories/${categoryId}/edit`)
-                            .then(response => response.json())
-                            .then(data => {
-                                document.getElementById('edit-name').value = data.name;
-                                document.getElementById('edit-description').value = data
-                                    .description;
-                                document.getElementById('edit-category-form').action =
-                                    `/categories/${categoryId}`;
-                                editCategoryModal.classList.remove('hidden');
-                            });
-                    });
-                });
-            }
+            if (iconInput) {
+                iconInput.addEventListener('input', function() {
+                    const svgCode = iconInput.value.trim();
 
-            // Sembunyikan modal edit saat tombol close atau cancel diklik
-            if (closeEditModal) {
-                closeEditModal.addEventListener('click', function() {
-                    editCategoryModal.classList.add('hidden');
-                });
-            }
-
-            if (cancelEdit) {
-                cancelEdit.addEventListener('click', function() {
-                    editCategoryModal.classList.add('hidden');
-                });
-            }
-
-            // Sembunyikan modal edit saat mengklik di luar modal
-            if (editCategoryModal) {
-                editCategoryModal.addEventListener('click', function(event) {
-                    if (event.target === editCategoryModal) {
-                        editCategoryModal.classList.add('hidden');
+                    if (svgCode) {
+                        iconPreview.innerHTML = svgCode;
+                    } else {
+                        iconPreview.innerHTML = '<span class="text-gray-500">No icon</span>';
                     }
                 });
             }
         });
     </script>
-    {{-- detail --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tampilkan modal detail saat tombol detail diklik
-            const viewButtons = document.querySelectorAll('.view-category-btn');
-            const detailCategoryModal = document.getElementById('detail-category-modal');
-            const closeDetailModal = document.getElementById('close-detail-modal');
-            const cancelDetail = document.getElementById('cancel-detail');
 
-            if (viewButtons) {
-                viewButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const categoryId = this.getAttribute('data-id');
-                        fetch(`/categories/${categoryId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                document.getElementById('detail-name').textContent = data.name;
-                                document.getElementById('detail-description').textContent = data
-                                    .description;
-                                detailCategoryModal.classList.remove('hidden');
-                            });
-                    });
-                });
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-category-btn');
+        const editCategoryModal = document.getElementById('edit-category-modal');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const cancelEdit = document.getElementById('cancel-edit');
+        const iconPreview = document.getElementById('edit-icon-preview');
+        const iconTextarea = document.getElementById('edit-icon');
 
-            if (cancelDetail) {
-                cancelDetail.addEventListener('click', function() {
-                    detailCategoryModal.classList.add('hidden');
-                });
-            }
+        if (editButtons) {
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const categoryId = this.getAttribute('data-id');
+                    fetch(`/categories/${categoryId}/edit`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('edit-name').value = data.name;
+                            document.getElementById('edit-description').value = data.description;
+                            document.getElementById('edit-category-form').action = `/categories/${categoryId}`;
 
-            // Sembunyikan modal detail saat tombol close diklik
-            if (closeDetailModal) {
-                closeDetailModal.addEventListener('click', function() {
-                    detailCategoryModal.classList.add('hidden');
-                });
-            }
+                            // Isi textarea dengan kode SVG
+                            iconTextarea.value = data.icon;
 
-            // Sembunyikan modal detail saat mengklik di luar modal
-            if (detailCategoryModal) {
-                detailCategoryModal.addEventListener('click', function(event) {
-                    if (event.target === detailCategoryModal) {
-                        detailCategoryModal.classList.add('hidden');
-                    }
+                            // Tampilkan preview ikon SVG
+                            if (data.icon) {
+                                iconPreview.innerHTML = data.icon;
+                            } else {
+                                iconPreview.innerHTML = '<span class="text-gray-500">No icon</span>';
+                            }
+
+                            editCategoryModal.classList.remove('hidden');
+                        });
                 });
+            });
+        }
+
+        // Update preview saat textarea SVG diubah
+        iconTextarea.addEventListener('input', function () {
+            if (iconTextarea.value.trim() !== '') {
+                iconPreview.innerHTML = iconTextarea.value;
+            } else {
+                iconPreview.innerHTML = '<span class="text-gray-500">No icon</span>';
             }
         });
-    </script>
+
+        // Sembunyikan modal edit saat tombol close atau cancel diklik
+        if (closeEditModal) {
+            closeEditModal.addEventListener('click', function () {
+                editCategoryModal.classList.add('hidden');
+            });
+        }
+
+        if (cancelEdit) {
+            cancelEdit.addEventListener('click', function () {
+                editCategoryModal.classList.add('hidden');
+            });
+        }
+
+        // Sembunyikan modal edit saat mengklik di luar modal
+        if (editCategoryModal) {
+            editCategoryModal.addEventListener('click', function (event) {
+                if (event.target === editCategoryModal) {
+                    editCategoryModal.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>
+
     {{-- Destror --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -58,7 +58,9 @@
                         <div class="p-2">
                             <h3 class="text-lg font-bold mb-2">{{ $promo->product->name }}</h3>
                             <p class="text-gray-600 text-sm mb-3">
-                                {{ $promo->product->description ?? 'No description available.' }}</p>
+                                {{ Str::limit($promo->product->description ?? 'No description available.', 50, '...') }}
+                            </p>
+
                             <div class="flex justify-between items-center gap-x-4"> <!-- Tambahkan gap-x-4 di sini -->
                                 <div>
                                     @php
@@ -113,11 +115,11 @@
                 <div class="category-card {{ $color['bg'] }} rounded-xl p-6 text-center transition duration-300 shadow-md"
                     data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                     <div class="{{ $color['icon'] }} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
+                        {!! $category->icon ?? '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="{{ $category->icon_path ?? 'M5 12h14M12 5l7 7-7 7' }}" />
-                        </svg>
+                                d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>' !!}
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ $category->name }}</h3>
                     <p class="text-gray-600 mb-4">{{ $category->description }}</p>
@@ -129,6 +131,7 @@
         </div>
     </div>
 </section>
+
 
 
 <!-- Featured Products Section -->
@@ -160,8 +163,11 @@
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold mb-2">{{ $product->name }}</h3>
-                            <p class="text-gray-600 text-sm mb-3">
-                                {{ $product->description ?? 'No description available.' }}</p>
+
+                                <p class="text-gray-600 text-sm mb-3">
+                                    {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}
+                                </p>
+
                             <div class="flex justify-between items-center">
                                 <span class="text-primary font-bold">Rp
                                     {{ number_format($product->harga, 0, ',', '.') }}</span>
