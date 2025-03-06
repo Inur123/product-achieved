@@ -41,17 +41,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($promotions as $promo)
                 @if (isset($promo->product))
-                    <div
-                        class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                <a href="{{ route('item-detail', ['id' => $promo->product->id]) }}" class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+
                         <div class="relative">
                             <img src="{{ $promo->product->image ? asset('storage/' . $promo->product->image) : asset('/placeholder.svg?height=150&width=250') }}"
                                 alt="{{ $promo->product->name }}" class="w-full h-48 object-cover" />
-                            <div
-                                class="absolute top-0 right-0 bg-secondary rounded-bl-lg text-white text-sm font-bold px-3 py-1">
+                            <div class="absolute top-0 right-0 bg-secondary rounded-bl-lg text-white text-sm font-bold px-3 py-1">
                                 {{ $promo->discount_type == 'percentage' ? $promo->discount_value . '% OFF' : 'Rp ' . number_format($promo->discount_value, 0, ',', '.') . ' OFF' }}
                             </div>
-                            <div
-                                class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
+                            <div class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
                                 PROMO
                             </div>
                         </div>
@@ -61,7 +59,7 @@
                                 {{ Str::limit($promo->product->description ?? 'No description available.', 50, '...') }}
                             </p>
 
-                            <div class="flex justify-between items-center gap-x-4"> <!-- Tambahkan gap-x-4 di sini -->
+                            <div class="">
                                 <div>
                                     @php
                                         $originalPrice = $promo->product->harga;
@@ -70,21 +68,22 @@
                                                 ? $originalPrice - $originalPrice * ($promo->discount_value / 100)
                                                 : max($originalPrice - $promo->discount_value, 0);
                                     @endphp
-                                    <span class="text-gray-400 line-through text-sm">Rp
-                                        {{ number_format($originalPrice, 0, ',', '.') }}</span>
-                                    <span class="text-primary font-bold ml-1">Rp
-                                        {{ number_format($discountedPrice, 0, ',', '.') }}</span>
+                                  <div class="flex justify-between">
+                                    <span class="text-gray-400 line-through text-sm">Rp.
+                                        {{ number_format($originalPrice, 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-primary font-bold">Rp.
+                                        {{ number_format($discountedPrice, 0, ',', '.') }}
+                                    </span>
                                 </div>
-                                <button
-                                    class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                                    Add to Cart
-                                </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 @endif
             @endforeach
         </div>
+
 
         <div class="text-center mt-8">
             <a href="#"
@@ -151,33 +150,24 @@
 
                 @if (!$isPromo)
                     <!-- Hanya tampilkan produk yang tidak masuk dalam promosi -->
-                    <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
-                        data-aos="zoom-in" data-aos-delay="100">
+                    <a href="{{ route('item-detail', ['id' => $product->id]) }}" class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="zoom-in" data-aos-delay="100">
+
                         <div class="relative">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                class="w-full h-48 object-cover">
-                            <div
-                                class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
                                 {{ $product->category->name ?? 'Category' }}
                             </div>
                         </div>
                         <div class="p-4">
                             <h3 class="text-lg font-bold mb-2">{{ $product->name }}</h3>
-
-                                <p class="text-gray-600 text-sm mb-3">
-                                    {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}
-                                </p>
-
+                            <p class="text-gray-600 text-sm mb-3">
+                                {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}
+                            </p>
                             <div class="flex justify-between items-center">
-                                <span class="text-primary font-bold">Rp
-                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                <button
-                                    class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                                    Add to Cart
-                                </button>
+                                <span class="text-primary font-bold">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 @endif
             @endforeach
         </div>
@@ -189,6 +179,7 @@
         </div>
     </div>
 </section>
+
 
 
 <!-- Testimonials -->

@@ -12,18 +12,18 @@
                     <a href="#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="#products" class="text-dark hover:text-primary font-semibold">Books</a>
-                    <a href="{{ url('/cek-transaksi') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
+                    <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @else
                     <!-- Jika sedang di halaman lain, arahkan ke Home terlebih dahulu -->
                     <a href="{{ url('/') }}#hero" class="text-dark hover:text-primary font-semibold">Home</a>
                     <a href="{{ url('/') }}#promo" class="text-dark hover:text-primary font-semibold">Promo</a>
                     <a href="{{ url('/') }}#categories" class="text-dark hover:text-primary font-semibold">Categories</a>
                     <a href="{{ url('/') }}#products" class="text-dark hover:text-primary font-semibold">Books</a>
-                    <a href="{{ url('/cek-transaksi') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
+                    <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
                 @endif
             </nav>
             <div class="flex items-center space-x-4">
-                <a
+                {{-- <a
                     href="#"
                     class="bg-primary text-white px-4 py-2 hidden md:flex rounded-full font-bold hover:bg-opacity-90 transition flex items-center gap-2"
                 >
@@ -42,6 +42,11 @@
                         />
                     </svg>
                     Checkout
+                </a> --}}
+                <a href="#" class="text-dark hover:text-primary  hidden md:flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
                 </a>
                 <button
                     id="mobile-menu-button"
@@ -101,7 +106,7 @@
     </div>
     <nav class="flex flex-col space-y-4">
         <a
-            href="#"
+            href="/"
             class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100"
             >Home</a
         >
@@ -121,10 +126,11 @@
             >Books</a
         >
         <a
-        href="/cek-transaksi"
+        href="{{ route('transactions.cek') }}"
         class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100"
-        >Cek Transaksi</a
     >
+        Cek Transaksi
+    </a>
     </nav>
     <div class="mt-auto">
         <a

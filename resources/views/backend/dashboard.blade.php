@@ -66,7 +66,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                    <p class="text-3xl font-bold text-gray-800">3,542</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalTransactions }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-accent bg-opacity-10">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +90,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                    <p class="text-3xl font-bold text-gray-800">$42,389</p>
+                    <p class="text-3xl font-bold text-gray-800">
+                        Rp. {{ number_format($totalRevenue, 0, ',', '.') }}
+                    </p>
                 </div>
                 <div class="p-3 rounded-full bg-green-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

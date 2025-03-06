@@ -21,6 +21,13 @@ class Product extends Model
     return $this->hasOne(Promotion::class);
 }
 
+public function transactions()
+{
+    return $this->belongsToMany(Transaction::class)
+                ->withPivot('quantity', 'price') // Include additional columns from pivot table
+                ->withTimestamps();
+}
+
 
 
 }

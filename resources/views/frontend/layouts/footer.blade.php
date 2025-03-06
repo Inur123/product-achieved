@@ -37,7 +37,7 @@
                     <li><a href="#" class="text-gray-400 hover:text-white">Promo</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white">Categories</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white">Books</a></li>
-                    <li><a href="/cek-transaksi" class="text-gray-400 hover:text-white">Cek Transaksi</a></li>
+                    <li><a href="{{ route('transactions.cek') }}" class="text-gray-400 hover:text-white">Cek Transaksi</a></li>
                 </ul>
             </div>
             <div>
