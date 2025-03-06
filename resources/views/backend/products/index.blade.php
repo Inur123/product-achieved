@@ -37,7 +37,8 @@
                                 No</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Code Product</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gambar
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Gambar
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
                             </th>
@@ -173,9 +174,9 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Product Code</label>
                                 <input type="text" name="code_product" id="code_product"
-                                value="{{ $code_product ?? old('code_product') }}" placeholder="Enter product code"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                readonly>
+                                    value="{{ $code_product ?? old('code_product') }}" placeholder="Enter product code"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                    readonly>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
@@ -272,8 +273,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Product Code</label>
                                 <input type="text" name="code_product" id="edit-code_product"
-                                    value="{{ $product->code_product }}"
-                                    placeholder="Enter product code"
+                                    value="{{ $product->code_product }}" placeholder="Enter product code"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                     readonly>
                             </div>
@@ -302,10 +302,10 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                 <select name="category" id="edit-category"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                required>
-                                <!-- Opsi kategori akan diisi oleh JavaScript -->
-                            </select>
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                    required>
+                                    <!-- Opsi kategori akan diisi oleh JavaScript -->
+                                </select>
                             </div>
                         </div>
                         <div>
@@ -406,8 +406,8 @@
         </div>
     </main>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Ambil elemen notifikasi
@@ -431,83 +431,82 @@
         });
     </script>
     <script>
-       document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-// Tampilkan modal saat tombol "Add New Product" diklik
-const addProductBtn = document.getElementById('add-product-btn');
-const addProductModal = document.getElementById('add-product-modal');
-const closeModal = document.getElementById('close-modal');
-const cancelAdd = document.getElementById('cancel-add');
+            // Tampilkan modal saat tombol "Add New Product" diklik
+            const addProductBtn = document.getElementById('add-product-btn');
+            const addProductModal = document.getElementById('add-product-modal');
+            const closeModal = document.getElementById('close-modal');
+            const cancelAdd = document.getElementById('cancel-add');
 
-const codeProductInput = document.getElementById('code_product');
+            const codeProductInput = document.getElementById('code_product');
 
-// Set the code_product value dynamically if it's passed
-if (codeProductInput) {
-    codeProductInput.value = '{{ $code_product ?? "" }}';
-}
+            // Set the code_product value dynamically if it's passed
+            if (codeProductInput) {
+                codeProductInput.value = '{{ $code_product ?? '' }}';
+            }
 
-if (addProductBtn) {
-    addProductBtn.addEventListener('click', function() {
-        addProductModal.classList.remove('hidden');
-    });
-}
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', function() {
+                    addProductModal.classList.remove('hidden');
+                });
+            }
 
-// Sembunyikan modal saat tombol "Close" atau "Cancel" diklik
-if (closeModal) {
-    closeModal.addEventListener('click', function() {
-        addProductModal.classList.add('hidden');
-    });
-}
+            // Sembunyikan modal saat tombol "Close" atau "Cancel" diklik
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    addProductModal.classList.add('hidden');
+                });
+            }
 
-if (cancelAdd) {
-    cancelAdd.addEventListener('click', function() {
-        addProductModal.classList.add('hidden');
-    });
-}
+            if (cancelAdd) {
+                cancelAdd.addEventListener('click', function() {
+                    addProductModal.classList.add('hidden');
+                });
+            }
 
-// Sembunyikan modal saat mengklik di luar modal
-if (addProductModal) {
-    addProductModal.addEventListener('click', function(event) {
-        if (event.target === addProductModal) {
-            addProductModal.classList.add('hidden');
-        }
-    });
-}
+            // Sembunyikan modal saat mengklik di luar modal
+            if (addProductModal) {
+                addProductModal.addEventListener('click', function(event) {
+                    if (event.target === addProductModal) {
+                        addProductModal.classList.add('hidden');
+                    }
+                });
+            }
 
-// Preview gambar
-document.getElementById("product-image").addEventListener("change", function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById("image-preview");
-            preview.src = e.target.result;
-            preview.classList.remove("hidden");
-        };
-        reader.readAsDataURL(file);
-    }
-});
+            // Preview gambar
+            document.getElementById("product-image").addEventListener("change", function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById("image-preview");
+                        preview.src = e.target.result;
+                        preview.classList.remove("hidden");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-// Tangani error validasi
-@if ($errors->any())
-    Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        html: `
+            // Tangani error validasi
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: `
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
     `,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000,
-        toast: true,
-    });
-@endif
-});
-
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    toast: true,
+                });
+            @endif
+        });
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -528,17 +527,22 @@ document.getElementById("product-image").addEventListener("change", function(eve
                                 const categories = data.categories;
 
                                 // Isi form dengan data produk
-                                document.getElementById('edit-code_product').value = product.code_product;
+                                document.getElementById('edit-code_product').value = product
+                                    .code_product;
                                 document.getElementById('edit-name').value = product.name;
-                                document.getElementById('edit-description').value = product.description;
+                                document.getElementById('edit-description').value = product
+                                    .description;
                                 document.getElementById('edit-harga').value = product.harga;
                                 document.getElementById('edit-status').value = product.status;
-                                document.getElementById('edit-image-preview').src = `{{ asset('storage/') }}/${product.image}`;
-                                document.getElementById('edit-image-preview').classList.remove('hidden');
+                                document.getElementById('edit-image-preview').src =
+                                    `{{ asset('storage/') }}/${product.image}`;
+                                document.getElementById('edit-image-preview').classList.remove(
+                                    'hidden');
 
                                 // Isi dropdown category
                                 const categorySelect = document.getElementById('edit-category');
-                                categorySelect.innerHTML = ''; // Kosongkan dropdown terlebih dahulu
+                                categorySelect.innerHTML =
+                                ''; // Kosongkan dropdown terlebih dahulu
 
                                 // Tambahkan opsi default
                                 const defaultOption = document.createElement('option');
@@ -561,7 +565,8 @@ document.getElementById("product-image").addEventListener("change", function(eve
                                 });
 
                                 // Set action form
-                                document.getElementById('edit-product-form').action = `/products/${productId}`;
+                                document.getElementById('edit-product-form').action =
+                                    `/products/${productId}`;
 
                                 // Tampilkan modal
                                 editProductModal.classList.remove('hidden');

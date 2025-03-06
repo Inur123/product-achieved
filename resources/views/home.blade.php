@@ -5,7 +5,7 @@
 <section class="bg-gradient-to-r from-primary to-secondary py-16 pt-24" id="hero" data-aos="fade-up">
     <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 text-white mb-8 md:mb-0"  data-aos="fade-right" data-aos-delay="100">
+            <div class="md:w-1/2 text-white mb-8 md:mb-0" data-aos="fade-right" data-aos-delay="100">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
                     Discover the Joy of Reading with KiddiBooks!
                 </h1>
@@ -23,16 +23,15 @@
                 </div>
             </div>
             <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
-                <img src="b.png" alt="Children reading books"
-                    class="" />
+                <img src="b.png" alt="Children reading books" class="" />
             </div>
         </div>
     </div>
 </section>
 <!-- Promo Section -->
-<section id="promo" class="py-16 bg-white" data-aos="fade-up">
+<section id="promo" class="py-16 bg-white">
     <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between mb-8" data-aos="fade-down" data-aos-delay="100">
+        <div class="flex items-center justify-between mb-8">
             <h2 class="text-3xl font-bold">Special Promotions</h2>
             <div class="bg-primary text-white px-4 py-2 rounded-full font-bold animate-pulse">
                 Limited Time Offers!
@@ -40,395 +39,156 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Promo Book 1 -->
-            <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
+            @foreach ($promotions as $promo)
+                @if (isset($promo->product))
                     <div
-                        class="absolute top-0 right-0 bg-secondary rounded-bl-lg text-white text-sm font-bold px-3 py-1">
-                        50% OFF
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
-                        FLASH SALE
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Math Adventures</h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        Making math fun through stories and puzzles.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-gray-400 line-through text-sm">$14.99</span>
-                            <span class="text-primary font-bold ml-1">$7.49</span>
+                        class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                        <div class="relative">
+                            <img src="{{ $promo->product->image ? asset('storage/' . $promo->product->image) : asset('/placeholder.svg?height=150&width=250') }}"
+                                alt="{{ $promo->product->name }}" class="w-full h-48 object-cover" />
+                            <div
+                                class="absolute top-0 right-0 bg-secondary rounded-bl-lg text-white text-sm font-bold px-3 py-1">
+                                {{ $promo->discount_type == 'percentage' ? $promo->discount_value . '% OFF' : 'Rp ' . number_format($promo->discount_value, 0, ',', '.') . ' OFF' }}
+                            </div>
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
+                                PROMO
+                            </div>
                         </div>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Promo Book 2 -->
-            <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="200">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
-                    <div
-                        class="absolute top-0 right-0 bg-secondary rounded-bl-lg  text-white text-sm font-bold px-3 py-1">
-                        50% OFF
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
-                        FLASH SALE
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Math Adventures</h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        Making math fun through stories and puzzles.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-gray-400 line-through text-sm">$14.99</span>
-                            <span class="text-primary font-bold ml-1">$7.49</span>
+                        <div class="p-2">
+                            <h3 class="text-lg font-bold mb-2">{{ $promo->product->name }}</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                {{ $promo->product->description ?? 'No description available.' }}</p>
+                            <div class="flex justify-between items-center gap-x-4"> <!-- Tambahkan gap-x-4 di sini -->
+                                <div>
+                                    @php
+                                        $originalPrice = $promo->product->harga;
+                                        $discountedPrice =
+                                            $promo->discount_type === 'percentage'
+                                                ? $originalPrice - $originalPrice * ($promo->discount_value / 100)
+                                                : max($originalPrice - $promo->discount_value, 0);
+                                    @endphp
+                                    <span class="text-gray-400 line-through text-sm">Rp
+                                        {{ number_format($originalPrice, 0, ',', '.') }}</span>
+                                    <span class="text-primary font-bold ml-1">Rp
+                                        {{ number_format($discountedPrice, 0, ',', '.') }}</span>
+                                </div>
+                                <button
+                                    class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
+                                    Add to Cart
+                                </button>
+                            </div>
                         </div>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                            Add to Cart
-                        </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Promo Book 3 -->
-            <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="300">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
-                    <div
-                        class="absolute top-0 right-0 bg-secondary rounded-bl-lg  text-white text-sm font-bold px-3 py-1">
-                        50% OFF
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
-                        FLASH SALE
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Math Adventures</h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        Making math fun through stories and puzzles.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-gray-400 line-through text-sm">$14.99</span>
-                            <span class="text-primary font-bold ml-1">$7.49</span>
-                        </div>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Promo Book 4 -->
-            <div
-                class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary" data-aos="zoom-in" data-aos-delay="400">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Math Adventures" class="w-full h-48 object-cover" />
-                    <div
-                        class="absolute top-0 right-0 bg-secondary rounded-bl-lg  text-white text-sm font-bold px-3 py-1">
-                        50% OFF
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-secondary bg-opacity-80 text-white py-2 px-3 font-bold">
-                        FLASH SALE
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Math Adventures</h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        Making math fun through stories and puzzles.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-gray-400 line-through text-sm">$14.99</span>
-                            <span class="text-primary font-bold ml-1">$7.49</span>
-                        </div>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
+                @endif
+            @endforeach
         </div>
 
-        <div class="text-center mt-8" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center mt-8">
             <a href="#"
-                class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">View
-                All Promotions</a>
+                class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
+                View All Promotions
+            </a>
         </div>
     </div>
 </section>
+
+
 <!-- Categories Section -->
 <section id="categories" class="py-16 bg-gray-50" data-aos="fade-up">
     <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-12" data-aos="fade-down">Explore Categories</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            <!-- IELTS Category -->
-            <div class="category-card bg-blue-100 rounded-xl p-6 text-center transition duration-300 shadow-md" data-aos="fade-up" data-aos-delay="100">
-                <div class="bg-blue-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                    </svg>
+            @foreach($categories as $index => $category)
+                @php
+                    $colors = [
+                        ['bg' => 'bg-blue-100', 'icon' => 'bg-blue-500', 'text' => 'text-blue-500'],
+                        ['bg' => 'bg-green-100', 'icon' => 'bg-green-500', 'text' => 'text-green-500'],
+                        ['bg' => 'bg-red-100', 'icon' => 'bg-red-500', 'text' => 'text-red-500'],
+                        ['bg' => 'bg-purple-100', 'icon' => 'bg-purple-500', 'text' => 'text-purple-500'],
+                        ['bg' => 'bg-yellow-100', 'icon' => 'bg-yellow-500', 'text' => 'text-yellow-500']
+                    ];
+                    $color = $colors[$index % count($colors)];
+                @endphp
+                <div class="category-card {{ $color['bg'] }} rounded-xl p-6 text-center transition duration-300 shadow-md"
+                    data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                    <div class="{{ $color['icon'] }} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="{{ $category->icon_path ?? 'M5 12h14M12 5l7 7-7 7' }}" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">{{ $category->name }}</h3>
+                    <p class="text-gray-600 mb-4">{{ $category->description }}</p>
+                    <a href="{{ $category->link }}" class="font-bold hover:underline {{ $color['text'] }}">
+                        Explore {{ $category->name }} →
+                    </a>
                 </div>
-                <h3 class="text-xl font-bold mb-2">IELTS</h3>
-                <p class="text-gray-600 mb-4">Prepare your child for international English tests with fun learning
-                    materials.</p>
-                <a href="#" class="text-blue-500 font-bold hover:underline">Explore IELTS Books →</a>
-            </div>
-
-            <!-- STEAM Kids Category -->
-            <div class="category-card bg-green-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="200">
-                <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">STEAM Kids</h3>
-                <p class="text-gray-600 mb-4">Science, Technology, Engineering, Arts, and Math books for curious minds.
-                </p>
-                <a href="#" class="text-green-500 font-bold hover:underline">Explore STEAM Books →</a>
-            </div>
-
-            <!-- Promo Category -->
-            <div class="category-card bg-red-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="300">
-                <div class="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Promo</h3>
-                <p class="text-gray-600 mb-4">Special offers and discounted e-books for a limited time. Don't miss out!
-                </p>
-                <a href="#" class="text-red-500 font-bold hover:underline">See Promotions →</a>
-            </div>
-
-            <!-- TOEFL Category -->
-            <div class="category-card bg-purple-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="400">
-                <div class="bg-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">TOEFL</h3>
-                <p class="text-gray-600 mb-4">Help your child excel in TOEFL with our engaging preparation materials.
-                </p>
-                <a href="#" class="text-purple-500 font-bold hover:underline">Explore TOEFL Books →</a>
-            </div>
-
-            <!-- All Books Category -->
-            <div class="category-card bg-yellow-100 rounded-xl p-6 text-center transition duration-300 shadow-md"data-aos="fade-up" data-aos-delay="500">
-                <div class="bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2  2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">All Books</h3>
-                <p class="text-gray-600 mb-4">Browse our complete collection of children's educational e-books.</p>
-                <a href="#" class="text-yellow-600 font-bold hover:underline">View All Books →</a>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+
 
 <!-- Featured Products Section -->
 <section id="products" class="py-16 bg-white" data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-4"data-aos="fade-down">Featured E-Books</h2>
-        <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto"data-aos="fade-down" data-aos-delay="100">Discover our most popular educational e-books that
-            children love and parents trust.</p>
+        <h2 class="text-3xl font-bold text-center mb-4" data-aos="fade-down">Featured E-Books</h2>
+        <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto" data-aos="fade-down" data-aos-delay="100">
+            Discover our most popular educational e-books that children love and parents trust.
+        </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <!-- Book 1 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="IELTS Junior Prep"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        IELTS</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">IELTS Junior Prep</h3>
-                    <p class="text-gray-600 text-sm mb-3">Fun exercises to prepare children for IELTS exams.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$12.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
+            @foreach ($products as $product)
+                @php
+                    // Periksa apakah produk ada dalam daftar promo
+                    $isPromo = $promotions->contains('product_id', $product->id);
+                @endphp
 
-            <!-- Book 2 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Science Experiments at Home"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        STEAM</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Science Experiments at Home</h3>
-                    <p class="text-gray-600 text-sm mb-3">50 safe and fun experiments kids can do at home.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$9.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
+                @if (!$isPromo)
+                    <!-- Hanya tampilkan produk yang tidak masuk dalam promosi -->
+                    <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                        data-aos="zoom-in" data-aos-delay="100">
+                        <div class="relative">
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                class="w-full h-48 object-cover">
+                            <div
+                                class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                {{ $product->category->name ?? 'Category' }}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">{{ $product->name }}</h3>
+                            <p class="text-gray-600 text-sm mb-3">
+                                {{ $product->description ?? 'No description available.' }}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">Rp
+                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                <button
+                                    class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Book 3 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="TOEFL Vocabulary Builder"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        TOEFL</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">TOEFL Vocabulary Builder</h3>
-                    <p class="text-gray-600 text-sm mb-3">Expand your child's vocabulary for TOEFL success.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$10.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Book 4 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Art & Craft Projects"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        STEAM</div>
-                    <div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">NEW
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Art & Craft Projects</h3>
-                    <p class="text-gray-600 text-sm mb-3">Creative projects using materials found at home.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$9.49</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Book 5 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"data-aos="zoom-in" data-aos-delay="100">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Coding for Kids"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        STEAM</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Coding for Kids</h3>
-                    <p class="text-gray-600 text-sm mb-3">Introduction to programming concepts for children.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$13.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Book 6 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
-                <div class="relative">
-                    <img src="1.jpeg" alt="English Grammar Fun"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        IELTS</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">English Grammar Fun</h3>
-                    <p class="text-gray-600 text-sm mb-3">Learn grammar through games and activities.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$8.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Book 7 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
-                <div class="relative">
-                    <img src="1.jpeg" alt="Math Adventures"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        STEAM</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">Math Adventures</h3>
-                    <p class="text-gray-600 text-sm mb-3">Making math fun through stories and puzzles.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$11.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Book 8 -->
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
-                <div class="relative">
-                    <img src="1.jpeg" alt="TOEFL Junior Guide"
-                        class="w-full h-48 object-cover">
-                    <div class="absolute top-2 right-2 bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        TOEFL</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">TOEFL Junior Guide</h3>
-                    <p class="text-gray-600 text-sm mb-3">Complete preparation for the TOEFL Junior test.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-primary font-bold">$11.99</span>
-                        <button class="bg-primary text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90">Add to
-                            Cart</button>
-                    </div>
-                </div>
-            </div>
+                @endif
+            @endforeach
         </div>
-
-        <div class="text-center mt-12"data-aos="fade-up" data-aos-delay="100">
+        <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="100">
             <a href="#"
-                class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">View
-                All E-Books</a>
+                class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
+                View All E-Books
+            </a>
         </div>
     </div>
 </section>
 
+
 <!-- Testimonials -->
 <section class="py-16 bg-gray-50"data-aos="fade-up">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12"  data-aos="fade-down">What Parents & Teachers Say</h2>
+        <h2 class="text-3xl font-bold text-center mb-12" data-aos="fade-down">What Parents & Teachers Say</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-white p-6 rounded-lg shadow-md" data-aos="fade-up" data-aos-delay="100">
                 <div class="flex items-center mb-4">
@@ -560,4 +320,3 @@
         </div>
     </div>
 </section>
-

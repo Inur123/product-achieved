@@ -83,36 +83,36 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Product $product)
-{
-    $request->validate([
-        'code_product' => 'required|string|max:255',
-        'name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'harga' => 'required|numeric',
-        'category' => 'required|exists:categories,id', // Validasi category_id
-        'status' => 'required|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'code_product' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'harga' => 'required|numeric',
+            'category' => 'required|exists:categories,id', // Validasi category_id
+            'status' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $data = $request->except('image');
+        $data = $request->except('image');
 
-    // Tambahkan category_id ke data
-    $data['category_id'] = $request->input('category');
+        // Tambahkan category_id ke data
+        $data['category_id'] = $request->input('category');
 
-    if ($request->hasFile('image')) {
-        // Hapus gambar lama jika ada
-        if ($product->image) {
-            Storage::delete('public/' . $product->image);
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada
+            if ($product->image) {
+                Storage::delete('public/' . $product->image);
+            }
+            // Simpan gambar baru
+            $imagePath = $request->file('image')->store('products', 'public');
+            $data['image'] = $imagePath;
         }
-        // Simpan gambar baru
-        $imagePath = $request->file('image')->store('products', 'public');
-        $data['image'] = $imagePath;
+
+        $product->update($data);
+
+        return redirect()->route('products.index')->with('success', 'Product updated successfully');
     }
-
-    $product->update($data);
-
-    return redirect()->route('products.index')->with('success', 'Product updated successfully');
-}
 
     /**
      * Remove the specified resource from storage.
