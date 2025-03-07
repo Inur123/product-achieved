@@ -96,18 +96,20 @@ class AdminTransactionController extends Controller
     // Find the transaction by its code
     $transaction = Transaction::where('transaction_code', $transactionCode)->first();
 
-    // Check if the transaction exists
-    if (!$transaction) {
-        return response()->json(['error' => 'Transaction not found.'], 404);
+    if ($transaction) {
+        // Change the status to 'completed' when approved
+        $transaction->status = 'completed';
+        $transaction->save();
+
+        // Return a success response
+        return response()->json(['success' => true, 'message' => 'Transaction successfully approved.']);
     }
 
-    // Approve the transaction
-    $transaction->status = 'completed';
-    $transaction->save();
-
-    // Return a success response
-    return response()->json(['success' => 'Transaction approved successfully.']);
+    // Return a failure response if transaction is not found
+    return response()->json(['success' => false, 'message' => 'Transaction not found.']);
 }
+
+
 
 
 

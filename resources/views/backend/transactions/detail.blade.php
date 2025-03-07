@@ -130,6 +130,8 @@
         </div>
 
 
+
+
         <!-- Transaction History -->
         <div class="p-6 border-t border-gray-100">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Transaction History</h3>
@@ -186,30 +188,77 @@
     </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Ensure the script works when the DOM is fully loaded
-        $('#approve-btn').click(function() {
-            let transactionCode = $(this).data('code'); // Get the transaction code from the data attribute
 
-            $.ajax({
-                url: '/transactions/' + transactionCode + '/approve', // Send request to the appropriate route
-                type: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}", // CSRF token for security
-                },
-                success: function(response) {
-                    // Update UI to show that the transaction has been approved
-                    $('#status-section').html('<p class="text-green-600 font-semibold">✔️ Transaction Completed</p>');
-                },
-                error: function(xhr, status, error) {
-                    // Handle error (in case approval fails)
-                    alert('Error approving transaction: ' + xhr.responseText);
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the approve button
+    const approveButton = document.getElementById('approve-btn');
+
+    if (approveButton) {
+        // Add click event listener for the approve button
+        approveButton.addEventListener('click', function () {
+            const transactionCode = this.getAttribute('data-code'); // Get transaction code
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to approve this transaction?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2A6B96',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, approve it!',
+            }).then((result) => {
+                // If the user confirms the action
+                if (result.isConfirmed) {
+                    // Send AJAX request to update the transaction status
+                    $.ajax({
+                        url: `/transactions/${transactionCode}/approve`,
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",  // CSRF token for security
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // If approval is successful, update the UI
+                                $('#status-section').html('<p class="text-green-600 font-semibold">✔️ Transaction Completed</p>');
+
+                                // Show success notification
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Approved!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            } else {
+                                // If the approval fails
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            // If an error occurs during the AJAX request
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Something went wrong. Please try again.',
+                            });
+                        }
+                    });
                 }
             });
         });
-    });
-</script>
+    }
+});
 
+
+
+</script>
 
 @endsection
