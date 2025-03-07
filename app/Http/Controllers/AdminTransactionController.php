@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
 use App\Models\Product;
+use App\Models\Promotion;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminTransactionController extends Controller
 {
@@ -20,8 +22,8 @@ class AdminTransactionController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('transaction_code', 'like', '%' . $search . '%')
-                  ->orWhere('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
@@ -31,22 +33,102 @@ class AdminTransactionController extends Controller
             $query->where('status', $status);
         }
 
+        // Urutkan berdasarkan tanggal terbaru
+        $query->orderBy('created_at', 'desc');
+
         // Paginasi hasil query
         $transactions = $query->paginate(10);
 
-        return view('backend.transactions.index', compact('transactions'));
+        // Total jumlah transaksi
+        $totalTransactions = Transaction::count();
+
+        // Total jumlah transaksi berdasarkan status (pending dan completed)
+        $totalPending = Transaction::where('status', 'pending')->count();
+        $totalCompleted = Transaction::where('status', 'completed')->count();
+
+        // Total pendapatan dari transaksi yang telah selesai (completed)
+        $totalRevenue = Transaction::where('status', 'completed')
+            ->get()
+            ->sum(function ($transaction) {
+                $totalPriceAfterDiscount = 0;
+
+                foreach ($transaction->products as $product) {
+                    $promotions = Promotion::where('product_id', $product->id)
+                        ->where('end_date', '>=', now())
+                        ->get();
+
+                    $productPrice = $product->harga;
+                    $promoPrice = $productPrice;
+
+                    foreach ($promotions as $promotion) {
+                        if ($promotion->discount_type == 'percentage') {
+                            $promoPrice = $productPrice * (1 - ($promotion->discount_value / 100));
+                        } else {
+                            $promoPrice = $productPrice - $promotion->discount_value;
+                        }
+                    }
+
+                    $totalPriceAfterDiscount += $promoPrice;
+                }
+
+                return $totalPriceAfterDiscount;
+            });
+
+        return view('backend.transactions.index', compact('transactions', 'totalTransactions', 'totalPending', 'totalCompleted', 'totalRevenue'));
     }
 
 
-    // // Show the details of a specific transaction
-    // public function show($transactionCode)
-    // {
-    //     $transaction = Transaction::where('transaction_code', $transactionCode)->first();
-    //     if (!$transaction) {
-    //         return redirect()->route('admin.transactions.index')->with('error', 'Transaction not found');
-    //     }
-    //     return view('backend.transactions.show', compact('transaction'));
-    // }
+
+
+    // Show the details of a specific transaction
+    public function show($transactionCode)
+    {
+        $transaction = Transaction::where('transaction_code', $transactionCode)->first();
+
+        if (!$transaction) {
+            return redirect()->route('transactions.index')->with('error', 'Transaction not found');
+        }
+
+        return view('backend.transactions.detail', compact('transaction'));
+    }
+    public function approveTransaction($transactionCode)
+{
+    // Find the transaction by its code
+    $transaction = Transaction::where('transaction_code', $transactionCode)->first();
+
+    // Check if the transaction exists
+    if (!$transaction) {
+        return response()->json(['error' => 'Transaction not found.'], 404);
+    }
+
+    // Approve the transaction
+    $transaction->status = 'completed';
+    $transaction->save();
+
+    // Return a success response
+    return response()->json(['success' => 'Transaction approved successfully.']);
+}
+
+
+
+public function destroy($transactionCode)
+{
+    $transaction = Transaction::where('transaction_code', $transactionCode)->first();
+
+    if ($transaction) {
+        $transaction->delete();
+        return response()->json(['success' => true, 'message' => 'Transaction deleted successfully.']);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Transaction not found.']);
+}
+
+
+
+
+
+
+
 
     // // Update the status of a specific transaction
     // public function updateStatus(Request $request, $transactionCode)

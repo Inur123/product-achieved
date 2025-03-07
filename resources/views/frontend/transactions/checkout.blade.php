@@ -63,7 +63,7 @@
         <!-- Customer Information -->
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="text-xl font-bold mb-6">Customer Information</h2>
-            <form action="{{ route('complete.purchase') }}" method="POST" id="checkout-form" enctype="multipart/form-data">
+            <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

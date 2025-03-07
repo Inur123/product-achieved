@@ -12,62 +12,70 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function index()
-{
-    // Mengambil data pengguna yang sedang login
-    $user = Auth::user();
+    {
+        // Mengambil data pengguna yang sedang login
+        $user = Auth::user();
 
-    // Menghitung total produk
-    $totalProducts = Product::count();
+        // Menghitung total produk
+        $totalProducts = Product::count();
 
-    // Menghitung total kategori
-    $totalCategories = Category::count();
+        // Menghitung total kategori
+        $totalCategories = Category::count();
 
-    // Menghitung total transaksi
-    $totalTransactions = Transaction::count();
+        // Menghitung total transaksi
+        $totalTransactions = Transaction::count();
 
-    // Menghitung total pendapatan (total harga dari transaksi yang sudah selesai, termasuk diskon)
-    $totalRevenue = Transaction::where('status', 'completed') // Menghitung hanya transaksi yang sudah selesai
-        ->get()
-        ->sum(function ($transaction) {
-            // For each completed transaction, calculate the revenue after applying promotions
-            $totalPriceAfterDiscount = 0;
+        // Menghitung total pendapatan (total harga dari transaksi yang sudah selesai, termasuk diskon)
+        $totalRevenue = Transaction::where('status', 'completed') // Menghitung hanya transaksi yang sudah selesai
+            ->get()
+            ->sum(function ($transaction) {
+                $totalPriceAfterDiscount = 0;
 
-            // Get the products related to the transaction
-            foreach ($transaction->products as $product) {
-                // Retrieve any active promotions for the product
-                $promotions = Promotion::where('product_id', $product->id)
-                    ->where('end_date', '>=', now())
-                    ->get();
+                foreach ($transaction->products as $product) {
+                    $promotions = Promotion::where('product_id', $product->id)
+                        ->where('end_date', '>=', now())
+                        ->get();
 
-                // Get the original product price
-                $productPrice = $product->harga;
-                $promoPrice = $productPrice; // Default to the original price
+                    $productPrice = $product->harga;
+                    $promoPrice = $productPrice; // Default to the original price
 
-                // Calculate the promo price (if any)
-                foreach ($promotions as $promotion) {
-                    if ($promotion->discount_type == 'percentage') {
-                        $promoPrice = $productPrice * (1 - ($promotion->discount_value / 100));
-                    } else {
-                        $promoPrice = $productPrice - $promotion->discount_value;
+                    foreach ($promotions as $promotion) {
+                        if ($promotion->discount_type == 'percentage') {
+                            $promoPrice = $productPrice * (1 - ($promotion->discount_value / 100));
+                        } else {
+                            $promoPrice = $productPrice - $promotion->discount_value;
+                        }
                     }
+
+                    $totalPriceAfterDiscount += $promoPrice;
                 }
 
-                // Add the product price after discount to the total revenue
-                $totalPriceAfterDiscount += $promoPrice;
-            }
+                return $totalPriceAfterDiscount;
+            });
 
-            return $totalPriceAfterDiscount;
-        });
+        // Get the most recent orders (limit to 5 orders for the recent orders section)
+        $recentOrders = Transaction::with('products') // Assuming Transaction has a relationship with Product
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
 
-    // Mengembalikan view dashboard dengan data user, total produk, total kategori, total transaksi, dan total pendapatan
-    return view('backend.dashboard', [
-        'user' => $user,
-        'totalProducts' => $totalProducts,
-        'totalCategories' => $totalCategories,
-        'totalTransactions' => $totalTransactions,
-        'totalRevenue' => $totalRevenue, // Total revenue after discount
-    ]);
-}
+        $topSellingProducts = Product::withCount('transactions')
+        ->orderBy('transactions_count', 'desc')
+        ->take(5)
+        ->get();
+
+        // Mengembalikan view dashboard dengan data user, total produk, total kategori, total transaksi, total pendapatan, dan recent orders
+        return view('backend.dashboard', [
+            'user' => $user,
+            'totalProducts' => $totalProducts,
+            'totalCategories' => $totalCategories,
+            'totalTransactions' => $totalTransactions,
+            'totalRevenue' => $totalRevenue, // Total revenue after discount
+            'recentOrders' => $recentOrders, // Pass recent orders to the view
+            'topSellingProducts' => $topSellingProducts,
+        ]);
+    }
+
 
 
 

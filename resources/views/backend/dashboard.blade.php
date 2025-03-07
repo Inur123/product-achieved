@@ -131,49 +131,30 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">#ORD-7842</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Sarah Johnson</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mar 5, 2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">$29.97</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">#ORD-7841</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Michael Chen</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mar 4, 2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">$42.50</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">#ORD-7840</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Amanda Rodriguez</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mar 3, 2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">$18.99</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">#ORD-7839</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">John Smith</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mar 2, 2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">$35.45</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Completed</span>
-                            </td>
-                        </tr>
+                        @foreach($recentOrders as $order)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $order->transaction_code }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $order->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ \Carbon\Carbon::parse($order->created_at)->locale('id')->isoFormat('dddd, D MMMM  YYYY') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Rp.{{ number_format($order->products->sum('harga'), 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        @if($order->status == 'completed') bg-green-100 text-green-800
+                                        @elseif($order->status == 'pending') bg-yellow-100 text-yellow-800
+                                        @endif">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <div class="p-4 border-t border-gray-100 text-center">
-                <a href="#" class="text-primary hover:underline text-sm font-medium">View All Orders</a>
+                <a href="{{ route('transactions.index') }}" class="text-primary hover:underline text-sm font-medium">View All Orders</a>
             </div>
         </div>
+
 
         <!-- Top Products -->
         <div class="bg-white rounded-lg shadow-sm">
@@ -182,64 +163,27 @@
             </div>
             <div class="p-6">
                 <ul class="space-y-4">
-                    <li class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg">
-                            <img src="/placeholder.svg?height=48&width=48" alt="IELTS Junior Prep" class="w-full h-full object-cover rounded-lg">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-sm font-medium text-gray-800">IELTS Junior Prep</h3>
-                            <p class="text-xs text-gray-500">IELTS Category</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-800">$12.99</p>
-                            <p class="text-xs text-gray-500">342 sold</p>
-                        </div>
-                    </li>
-                    <li class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg">
-                            <img src="/placeholder.svg?height=48&width=48" alt="Science Experiments at Home" class="w-full h-full object-cover rounded-lg">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-sm font-medium text-gray-800">Science Experiments at Home</h3>
-                            <p class="text-xs text-gray-500">STEAM Category</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-800">$9.99</p>
-                            <p class="text-xs text-gray-500">287 sold</p>
-                        </div>
-                    </li>
-                    <li class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg">
-                            <img src="/placeholder.svg?height=48&width=48" alt="Math Adventures" class="w-full h-full object-cover rounded-lg">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-sm font-medium text-gray-800">Math Adventures</h3>
-                            <p class="text-xs text-gray-500">STEAM Category</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-800">$11.99</p>
-                            <p class="text-xs text-gray-500">245 sold</p>
-                        </div>
-                    </li>
-                    <li class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg">
-                            <img src="/placeholder.svg?height=48&width=48" alt="TOEFL Vocabulary Builder" class="w-full h-full object-cover rounded-lg">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-sm font-medium text-gray-800">TOEFL Vocabulary Builder</h3>
-                            <p class="text-xs text-gray-500">TOEFL Category</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-gray-800">$10.99</p>
-                            <p class="text-xs text-gray-500">198 sold</p>
-                        </div>
-                    </li>
+                    @foreach($topSellingProducts as $product)
+                        <li class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gray-100 rounded-lg">
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-lg">
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-sm font-medium text-gray-800">{{ $product->name }}</h3>
+                                <p class="text-xs text-gray-500">{{ $product->category->name ?? 'No Category' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">{{ $product->transactions_count }} sold</p>
+                            </div>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
             <div class="p-4 border-t border-gray-100 text-center">
-                <a href="#" class="text-primary hover:underline text-sm font-medium">View All Products</a>
+                <a href="{{ route('products.index') }}" class="text-primary hover:underline text-sm font-medium">View All Products</a>
             </div>
         </div>
+
     </div>
 </main>
 @endsection

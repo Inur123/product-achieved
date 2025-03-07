@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Transactions</p>
-                    <p class="text-3xl font-bold text-gray-800">3,542</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalTransactions }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-primary bg-opacity-10">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +32,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Completed</p>
-                    <p class="text-3xl font-bold text-gray-800">2,984</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalCompleted }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-green-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Pending</p>
-                    <p class="text-3xl font-bold text-gray-800">458</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalPending }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-yellow-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +80,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                    <p class="text-3xl font-bold text-gray-800">$42,389</p>
+                    <p class="text-3xl font-bold text-gray-800">  Rp. {{ number_format($totalRevenue, 0, ',', '.') }}</p>
                 </div>
                 <div class="p-3 rounded-full bg-secondary bg-opacity-10">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Search and Filter -->
+
     <!-- Search and Filter -->
 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
     <form action="{{ route('transactions.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
@@ -156,7 +156,8 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $transaction->created_at->format('M d, Y') }}</td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ \Carbon\Carbon::parse($transaction->created_at)->locale('id')->isoFormat('dddd, D MMMM  YYYY') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ 'Rp ' . number_format($transaction->total_price, 2, ',', '.') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -166,11 +167,19 @@
                             <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="text-secondary hover:text-opacity-70 mr-3">
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex space-x-2">
+                            <!-- Tombol Lihat -->
+                            <a href="{{ route('transactions.show', $transaction->transaction_code) }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+
+                            <!-- Tombol Hapus -->
+                            <button class="delete-transaction-btn text-red-500" data-id="{{ $transaction->transaction_code }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
                         </td>
@@ -224,4 +233,69 @@
         </div>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-transaction-btn');
+
+    if (deleteButtons) {
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const transactionCode = this.getAttribute('data-id'); // Get transaction_code
+
+                // Show SweetAlert2 confirmation
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#2A6B96',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Send DELETE request to server
+                        fetch(`/transactions/${transactionCode}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success notification
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: data.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    // Reload page after deletion
+                                    window.location.reload();
+                                });
+                            } else {
+                                // Show error notification
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed!',
+                                    text: data.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    }
+                });
+            });
+        });
+    }
+});
+
+</script>
 @endsection

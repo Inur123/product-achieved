@@ -75,17 +75,14 @@
                 </svg>
             </button>
 
-            <!-- Buy Button -->
-            <button class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition" data-id="{{ $product->id }}" onclick="redirectToCheckout(this)">
-                Beli
-            </button>
+           <!-- Buy Button -->
+<button class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition"
+onclick="window.location.href='{{ route('transaction.checkout', ['slug' => $product->slug]) }}'">
+Beli
+</button>
+
+
         </div>
     </div>
 </div>
 
-<script>
-    function redirectToCheckout(button) {
-        const productId = button.getAttribute('data-id');
-        window.location.href = '/checkout/' + productId;
-    }
-</script>

@@ -9,17 +9,17 @@ use Illuminate\Http\Request;
 
 class ItemDetailController extends Controller
 {
-    public function index($id) // Passing product ID to the method
+    public function index($slug)
     {
-        // Retrieve the product based on the ID
-        $product = Product::with('category')->findOrFail($id);
+        // Cari produk berdasarkan slug
+        $product = Product::where('slug', $slug)->with('category')->firstOrFail();
 
-        // Retrieve active promotions
+        // Ambil promo aktif
         $promotions = Promotion::where('end_date', '>=', Carbon::now())
             ->with('product')
             ->get();
 
-        // Pass the product and promotions data to the view
         return view('detail-product', compact('product', 'promotions'));
     }
+
 }

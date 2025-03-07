@@ -33,19 +33,20 @@
                 <table class="w-full">
                     <thead>
                         <tr class="bg-gray-50">
-                            <th class="px-6 py-3 text-left  text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 No</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Code Product</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Gambar
-                            </th>
+                                Gambar</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga
-                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Harga</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Terjual</th> <!-- New column for total sold -->
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Status</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -55,7 +56,6 @@
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($products as $index => $product)
                             <tr>
-
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                                     {{ $index + 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
@@ -71,9 +71,15 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     Rp. {{ number_format($product->harga, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ $product->transactions_count ?? 0 }}
+                                    <!-- Display total sold or 0 if not available -->
+                                </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        class="px-2 py-1 text-xs font-medium rounded-full {{ $product->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ $product->status }}</span>
+                                        class="px-2 py-1 text-xs font-medium rounded-full {{ $product->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $product->status }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button class="text-blue-500 hover:text-opacity-70 mr-3 view-product-btn"
@@ -105,6 +111,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                 <p class="text-sm text-gray-600">Showing
@@ -273,9 +280,9 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Product Code</label>
                                 <input type="text" name="code_product" id="edit-code_product"
-                                value="{{ $product->code_product ?? '' }}" placeholder="Enter product code"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                readonly>
+                                    value="{{ $product->code_product ?? '' }}" placeholder="Enter product code"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                    readonly>
 
                             </div>
 
@@ -543,7 +550,7 @@
                                 // Isi dropdown category
                                 const categorySelect = document.getElementById('edit-category');
                                 categorySelect.innerHTML =
-                                ''; // Kosongkan dropdown terlebih dahulu
+                                    ''; // Kosongkan dropdown terlebih dahulu
 
                                 // Tambahkan opsi default
                                 const defaultOption = document.createElement('option');
@@ -635,8 +642,7 @@
                                     .description;
                                 document.getElementById('detail-harga').textContent =
                                     `Rp ${data.harga.toLocaleString()}`;
-                                document.getElementById('detail-category').textContent = data
-                                    .category;
+                                    document.getElementById('detail-category').textContent = data.category || 'No category available';
                                 document.getElementById('detail-status').textContent = data
                                     .status;
                                 document.getElementById('detail-image-preview').src =

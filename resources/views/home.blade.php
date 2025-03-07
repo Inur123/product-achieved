@@ -41,7 +41,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($promotions as $promo)
                 @if (isset($promo->product))
-                <a href="{{ route('item-detail', ['id' => $promo->product->id]) }}" class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+                <a href="{{ route('item-detail', ['slug' => $promo->product->slug]) }}"
+                    class="book-card bg-white rounded-lg overflow-hidden shadow-lg transition duration-300 border-2 border-primary">
+
 
                         <div class="relative">
                             <img src="{{ $promo->product->image ? asset('storage/' . $promo->product->image) : asset('/placeholder.svg?height=150&width=250') }}"
@@ -86,7 +88,7 @@
 
 
         <div class="text-center mt-8">
-            <a href="#"
+            <a href="{{ route('all-product') }}"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
                 View All Promotions
             </a>
@@ -150,8 +152,9 @@
 
                 @if (!$isPromo)
                     <!-- Hanya tampilkan produk yang tidak masuk dalam promosi -->
-                    <a href="{{ route('item-detail', ['id' => $product->id]) }}" class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-aos="zoom-in" data-aos-delay="100">
-
+                    <a href="{{ route('item-detail', ['slug' => $product->slug]) }}"
+                        class="book-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300"
+                        data-aos="zoom-in" data-aos-delay="100">
                         <div class="relative">
                             <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
                             <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -172,7 +175,7 @@
             @endforeach
         </div>
         <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="100">
-            <a href="#"
+            <a href="{{ route('all-product') }}"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
                 View All E-Books
             </a>

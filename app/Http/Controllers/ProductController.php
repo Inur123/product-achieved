@@ -16,11 +16,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->paginate(10); // Pastikan category ikut dimuat
+        $products = Product::with('category', 'transactions') // Load the category and transactions relationship
+        ->withCount('transactions') // Count the number of related transactions
+        ->paginate(10);
         $categories = Category::all(); // Ambil semua kategori dari database
 
         $code_product = 'ACH-' . strtoupper(Str::random(5)); // Generate random code
-        return view('backend.products.index', compact('products', 'categories', 'code_product'));
+        return view('backend.products.index', compact('products', 'categories', 'code_product',));
     }
 
 
@@ -61,10 +63,22 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
-    {
-        return response()->json($product);
-    }
+    public function show($id)
+{
+    // Ambil data produk beserta relasi kategori
+    $product = Product::with('category')->findOrFail($id);
+
+    // Kembalikan data dalam format JSON
+    return response()->json([
+        'code_product' => $product->code_product,
+        'name' => $product->name,
+        'description' => $product->description,
+        'harga' => $product->harga,
+        'status' => $product->status,
+        'image' => $product->image,
+        'category' => $product->category ? $product->category->name : 'No category available', // Pastikan kategori tersedia
+    ]);
+}
 
     /**
      * Show the form for editing the specified resource.

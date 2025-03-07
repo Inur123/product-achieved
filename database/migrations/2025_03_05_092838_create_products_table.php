@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->decimal('harga', 10, 2);
             $table->enum('status', ['active', 'nonactive'])->default('active');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
 

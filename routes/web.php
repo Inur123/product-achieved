@@ -7,19 +7,21 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\AllProductController;
 use App\Http\Controllers\ItemDetailController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AdminTransactionController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-Route::get('/product/{id}', [ItemDetailController::class, 'index'])->name('item-detail');
-
+//detail product
+Route::get('/product/{slug}', [ItemDetailController::class, 'index'])->name('item-detail');
+//all product
+Route::get('/all-product', [AllProductController::class, 'index'])->name('all-product');
 
 Route::prefix('transaction')->name('transaction.')->group(function () {
     // Checkout route
-    Route::get('/{product}/checkout', [TransactionController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout/{slug}', [TransactionController::class, 'checkout'])->name('checkout');
 
     // Store route for completing a purchase
     Route::post('/complete-purchase', [TransactionController::class, 'store'])->name('complete.purchase');
@@ -42,7 +44,11 @@ Route::prefix('cek-transaksi')->name('transactions.')->group(function () {
 
 Route::prefix('transactions')->name('transactions.')->group(function () {
     Route::get('/', [AdminTransactionController::class, 'index'])->name('index');
+    Route::get('/detail-transaction/{transactionCode}', [AdminTransactionController::class, 'show'])->name('show');
+    Route::post('/{transactionCode}/approve', [AdminTransactionController::class, 'approveTransaction'])->name('approve');
+    Route::delete('/{transactionCode}', [AdminTransactionController::class, 'destroy'])->name('destroy'); // Add this route
 });
+
 
 
 

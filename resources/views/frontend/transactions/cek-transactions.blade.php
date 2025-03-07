@@ -7,18 +7,18 @@
         <div class="max-w-4xl mx-auto">
             <!-- Form untuk cek transaksi -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h3 class="text-2xl font-bold mb-6 text-center">Check Transaction</h3>
+                <h3 class="text-2xl font-bold mb-6 text-center">Cek Transaksi</h3>
                 <form action="{{ route('transactions.cek') }}" method="POST" class="max-w-md mx-auto">
                     @csrf
                     <div class="mb-4">
-                        <label for="transaction-id" class="block text-gray-700 font-semibold mb-2">Transaction ID</label>
-                        <input type="text" id="transaction-id" name="transaction_id" placeholder="Enter your transaction ID (e.g., KID-2025-...)"
+                        <label for="transaction-id" class="block text-gray-700 font-semibold mb-2">Kode Transaksi</label>
+                        <input type="text" id="transaction-id" name="transaction_id" placeholder="Isi kode transaksi  (e.g., ACH-2025...)"
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
                         @error('transaction_id')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <button type="submit" class="w-full bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition">Check Status</button>
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition">Cek Status</button>
                 </form>
             </div>
 
