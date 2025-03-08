@@ -1,4 +1,6 @@
 @extends('frontend.layouts.app')
+@section('title', 'Payment Pending')
+@section('content')
 <section class="py-12 bg-white pt-20">
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
@@ -88,7 +90,15 @@
                             <p class="text-gray-600 text-sm">{{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-bold text-primary">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</p>
+                            <p class="font-bold text-primary">
+                                Rp {{ number_format($product->promotions ?
+                                    ($product->promotions->discount_type == 'percentage'
+                                        ? $product->harga * (1 - $product->promotions->discount_value / 100)
+                                        : max(0, $product->harga - $product->promotions->discount_value)
+                                    )
+                                    : $product->harga, 2) }}
+                            </p>
+
                             <span class="text-yellow-500 text-sm font-semibold">{{ ucfirst($transaction->status) }}</span>
                         </div>
                     </div>
@@ -99,8 +109,8 @@
 
             <!-- Actions -->
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#" class="bg-secondary text-white font-bold py-3 px-8 rounded-full hover:bg-opacity-90 transition text-center">Check Order Status</a>
-                <a href="#" class="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-opacity-90 transition text-center">Continue Shopping</a>
+                <a href="{{ route('transactions.cek') }}" class="bg-secondary text-white font-bold py-3 px-8 rounded-full hover:bg-opacity-90 transition text-center">Check Order Status</a>
+                <a href="{{ route('all-product') }}" class="bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-opacity-90 transition text-center">Continue Shopping</a>
             </div>
         </div>
     </div>
@@ -135,3 +145,4 @@
         }, 200); // 2 detik
     }
 </script>
+@endsection

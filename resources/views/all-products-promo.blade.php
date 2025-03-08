@@ -1,5 +1,5 @@
 @extends('frontend.layouts.app')
-@section('title', 'all products')
+@section('title', 'all products promo')
 @section('content')
 <div>
 
@@ -7,9 +7,9 @@
     <section class="bg-gradient-to-r from-primary to-secondary py-16 pt-24">
         <div class="container mx-auto px-4">
             <div class="text-center text-white">
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4">All Products</h1>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4">All Promotional Products</h1>
                 <p class="text-xl max-w-3xl mx-auto">
-                    Browse our complete collection of educational e-books designed for young minds
+                    Browse our collection of products with active promotions
                 </p>
             </div>
         </div>
@@ -18,7 +18,7 @@
     <!-- Filter Section -->
     <section class="py-8">
         <div class="container mx-auto px-4">
-            <form method="GET" action="{{ route('all-product') }}">
+            <form method="GET" action="{{ route('all.products.promo') }}">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex flex-wrap items-center gap-4">
                         <div>
@@ -45,51 +45,53 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @if ($products->isEmpty())
-    <p class="text-center text-gray-500">No products found in this category.</p>
-@else
-    @foreach ($products as $product)
-    <a href="{{ route('item-detail', ['slug' => $product->slug]) }}" class="block">
-            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="relative">
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                        class="w-full h-48 object-cover">
-                    @if ($product->category)
-                        <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-                            {{ $product->category->name }}
-                        </div>
-                    @endif
-                </div>
-                <div class="p-4">
-                    <h3 class="text-lg font-bold mb-2">{{ $product->name }}</h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
+                    <!-- Tampilkan pesan jika tidak ada produk -->
+                    <p class="text-center text-gray-500 col-span-full">No promotional products found in this category.</p>
+                @else
+                    <!-- Loop melalui setiap produk -->
+                    @foreach ($products as $product)
+                        <a href="{{ route('item-detail', ['slug' => $product->slug]) }}" class="block">
+                            <div class="book-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                                <div class="relative">
+                                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                        class="w-full h-48 object-cover">
+                                    @if ($product->category)
+                                        <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                            {{ $product->category->name }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-lg font-bold mb-2">{{ $product->name }}</h3>
+                                    <p class="text-gray-600 text-sm mb-3">
+                                        {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}
+                                    </p>
 
-                    <div class="flex justify-between items-center">
-                        @if ($product->promotions)
-                            <span class="text-gray-500 text-sm line-through">Rp
-                                {{ number_format($product->harga, 0, ',', '.') }}</span>
-                            <span class="text-primary font-bold">
-                                Rp
-                                {{ number_format(
-                                    $product->promotions->discount_type == 'percentage'
-                                        ? $product->harga * (1 - $product->promotions->discount_value / 100)
-                                        : max(0, $product->harga - $product->promotions->discount_value),
-                                    0,
-                                    ',',
-                                    '.',
-                                ) }}
-                            </span>
-                        @else
-                            <span class="text-primary font-bold">Rp
-                                {{ number_format($product->harga, 0, ',', '.') }}</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </a>
-    @endforeach
-@endif
-
+                                    <div class="flex justify-between items-center">
+                                        @if ($product->promotions) <!-- Periksa apakah promosi ada (untuk relasi hasOne) -->
+                                            <span class="text-gray-500 text-sm line-through">Rp
+                                                {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                            <span class="text-primary font-bold">
+                                                Rp
+                                                {{ number_format(
+                                                    $product->promotions->discount_type == 'percentage'
+                                                        ? $product->harga * (1 - $product->promotions->discount_value / 100)
+                                                        : max(0, $product->harga - $product->promotions->discount_value),
+                                                    0,
+                                                    ',',
+                                                    '.',
+                                                ) }}
+                                            </span>
+                                        @else
+                                            <span class="text-primary font-bold">Rp
+                                                {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                @endif
             </div>
 
             <!-- Pagination -->
@@ -136,7 +138,7 @@
                         class="px-3 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 {{ $products->hasMorePages() ? '' : 'disabled' }}">Next</a>
                 </div>
             </div>
-
+        </div>
     </section>
 </div>
 @endsection

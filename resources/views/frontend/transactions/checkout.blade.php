@@ -1,5 +1,6 @@
 @extends('frontend.layouts.app')
-
+@section('title', 'Checkout')
+@section('content')
 <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8 pt-20">
 
     <!-- Left Column - Cart Items -->
@@ -149,3 +150,4 @@
         </div>
     </div>
 </div>
+@endsection

@@ -1,4 +1,5 @@
 @extends('frontend.layouts.app')
+@section('title', 'Payment Pending')
 <section class="py-12 bg-white pt-20">
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">

@@ -1,6 +1,6 @@
 <!-- resources/views/frontend/transactions/cek-transactions.blade.php -->
 @extends('frontend.layouts.app')
-
+@section('title', 'Cek Transaksi')
 @section('content')
 <section class="py-12 bg-white pt-20">
     <div class="container mx-auto px-4">
@@ -102,7 +102,7 @@
                                         <p class="text-gray-500 text-sm">{{ Str::limit($product->description, 50, '...') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-bold text-primary">Rp. {{ number_format($product->harga, 2) }}</p>
+                                        <p class="font-bold text-primary">Rp. {{ number_format($transaction->total_price, 2) }}</p>
                                         @if($transaction->status === 'completed')
                                             <a href="#" class="text-secondary text-sm font-semibold hover:underline">Download</a>
                                         @else
@@ -146,7 +146,7 @@
         setTimeout(() => {
             copyMessage.classList.remove('opacity-100');
             copyMessage.classList.add('opacity-0');
-        }, 2000); // 2 detik
+        }, 200); // 2 detik
     }
 
     // Tambahkan event listener untuk tombol copy

@@ -1,5 +1,8 @@
 @extends('frontend.layouts.app')
 
+@section('title','home')
+
+@section('content')
 
 <!-- Hero Section -->
 <section class="bg-gradient-to-r from-primary to-secondary py-16 pt-24" id="hero" data-aos="fade-up">
@@ -88,7 +91,7 @@
 
 
         <div class="text-center mt-8">
-            <a href="{{ route('all-product') }}"
+            <a href="{{ route('all.products.promo') }}"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
                 View All Promotions
             </a>
@@ -320,3 +323,4 @@
         </div>
     </div>
 </section>
+@endsection

@@ -10,6 +10,7 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\AllProductController;
 use App\Http\Controllers\ItemDetailController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AllProductPromoController;
 use App\Http\Controllers\AdminTransactionController;
 
 
@@ -18,6 +19,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/product/{slug}', [ItemDetailController::class, 'index'])->name('item-detail');
 //all product
 Route::get('/all-product', [AllProductController::class, 'index'])->name('all-product');
+//all product promo
+Route::get('/all-products-promo', [AllProductPromoController::class, 'index'])->name('all.products.promo');
 
 Route::prefix('transaction')->name('transaction.')->group(function () {
     // Checkout route
@@ -48,6 +51,8 @@ Route::prefix('transactions')->name('transactions.')->group(function () {
     Route::post('/{transactionCode}/approve', [AdminTransactionController::class, 'approveTransaction'])->name('approve');
     Route::delete('/{transactionCode}', [AdminTransactionController::class, 'destroy'])->name('destroy'); // Add this route
 });
+
+
 
 
 
