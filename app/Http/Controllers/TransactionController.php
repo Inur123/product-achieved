@@ -130,12 +130,6 @@ class TransactionController extends Controller
         // Retrieve the associated product for the transaction
         $product = $transaction->products()->first(); // Assuming there's only one product per transaction
 
-        // Check if the transaction status is 'completed'
-        if ($transaction->status == 'completed') {
-            // Redirect to the success page if the transaction is completed
-            return view('frontend.transactions.success', compact('transaction', 'product'));
-        }
-
         // If the status is not completed, show the pending view
         return view('frontend.transactions.pending', compact('transaction', 'product'));
     }

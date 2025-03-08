@@ -11,6 +11,7 @@ use App\Http\Controllers\AllProductController;
 use App\Http\Controllers\ItemDetailController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AllProductPromoController;
+use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\AdminTransactionController;
 
 
@@ -21,6 +22,8 @@ Route::get('/product/{slug}', [ItemDetailController::class, 'index'])->name('ite
 Route::get('/all-product', [AllProductController::class, 'index'])->name('all-product');
 //all product promo
 Route::get('/all-products-promo', [AllProductPromoController::class, 'index'])->name('all.products.promo');
+//category product
+Route::get('/category/{slug}', [CategoryProductController::class, 'showCategory'])->name('category.products');
 
 Route::prefix('transaction')->name('transaction.')->group(function () {
     // Checkout route
@@ -31,9 +34,6 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
 
     // Pending transaction route
     Route::get('/{transaction_code}', [TransactionController::class, 'pending'])->name('pending');
-
-    // Success transaction route
-    Route::get('/success/{transaction_code}', [TransactionController::class, 'success'])->name('success');
 });
 
 // Routes for checking a transaction

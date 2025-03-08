@@ -32,16 +32,16 @@
     </div>
 </section>
 <!-- Promo Section -->
-<section id="promo" class="py-16 bg-white">
+<section id="promo" class="py-16 bg-white" data-aos="fade-up">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between mb-8">
-            <h2 class="text-3xl font-bold">Special Promotions</h2>
+            <h2 class="text-3xl font-bold" >Special Promotions</h2>
             <div class="bg-primary text-white px-4 py-2 rounded-full font-bold animate-pulse">
                 Limited Time Offers!
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-aos="fade-right" data-aos-delay="100">
             @foreach ($promotions as $promo)
                 @if (isset($promo->product))
                 <a href="{{ route('item-detail', ['slug' => $promo->product->slug]) }}"
@@ -90,7 +90,7 @@
         </div>
 
 
-        <div class="text-center mt-8">
+        <div class="text-center mt-8" data-aos="fade-up">
             <a href="{{ route('all.products.promo') }}"
                 class="bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-opacity-90 transition inline-block">
                 View All Promotions
@@ -127,9 +127,14 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ $category->name }}</h3>
                     <p class="text-gray-600 mb-4">{{ $category->description }}</p>
-                    <a href="{{ $category->link }}" class="font-bold hover:underline {{ $color['text'] }}">
-                        Explore {{ $category->name }} →
-                    </a>
+                    <a href="{{ route('category.products', ['slug' => $category->slug]) }}"
+                        class="font-bold hover:underline {{ $color['text'] }}">
+                         Explore {{ $category->name }} →
+                     </a>
+
+                     {{-- <a href="{{ route('category.products', ['slug' => $category->slug]) }}">
+                        {{ $category->name }}
+                    </a> --}}
                 </div>
             @endforeach
         </div>
