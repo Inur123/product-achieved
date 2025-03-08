@@ -71,39 +71,46 @@
                     <!-- Order Summary -->
                     <div>
                         <h4 class="text-lg font-semibold mb-3">Order Summary</h4>
-                        <p class="text-gray-700 mb-1">Date: {{ \Carbon\Carbon::parse($transaction->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
-                        <p class="text-gray-700 mb-1">Items: {{ $transaction->products->count() }} item</p> <!-- Adjust this based on the number of items -->
-                        <p class="text-gray-700">Total: Rp {{ number_format($transaction->total_price, 2, ',', '.') }}</p>
+                        <p class="text-gray-700 mb-1">
+                            Date: {{ \Carbon\Carbon::parse($transaction->created_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                        </p>
+                        <p class="text-gray-700 mb-1">
+                            Items: {{ $transaction->products->count() }} item
+                        </p>
+                        <p class="text-gray-700 font-bold">
+                            Total: Rp {{ number_format($transaction->total_price, 2, ',', '.') }}
+                        </p>
                     </div>
+
                 </div>
 
 
                 <div class="border-t border-gray-200 pt-6">
                     <h4 class="text-lg font-semibold mb-3">Purchased Items</h4>
-                    <div class="flex items-center">
-                        <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden mr-4">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-lg">
-
-                        </div>
-                        <div class="flex-1">
-                            <h5 class="font-semibold">{{ $product->name }}</h5>
-                            <p class="text-gray-600 text-sm">{{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-primary">
-                                Rp {{ number_format($product->promotions ?
-                                    ($product->promotions->discount_type == 'percentage'
-                                        ? $product->harga * (1 - $product->promotions->discount_value / 100)
-                                        : max(0, $product->harga - $product->promotions->discount_value)
-                                    )
-                                    : $product->harga, 2) }}
-                            </p>
-
-                            <span class="text-yellow-500 text-sm font-semibold">{{ ucfirst($transaction->status) }}</span>
-                        </div>
+                    <div class="space-y-4">
+                        @foreach($transaction->products as $product)
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden mr-4">
+                                    <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-semibold">{{ $product->name }}</h5>
+                                    <p class="text-gray-500 text-sm">{{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-primary">
+                                        Rp. {{ number_format(
+                                            optional($product->promotions)->discount_type === 'percentage'
+                                                ? $product->harga * (1 - optional($product->promotions)->discount_value / 100)
+                                                : max(0, $product->harga - optional($product->promotions)->discount_value),
+                                            2
+                                        ) }}
+                                    </p>
+                                    <span class="text-yellow-500 text-sm font-semibold">{{ ucfirst($transaction->status) }}</span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-
-
                 </div>
             </div>
 

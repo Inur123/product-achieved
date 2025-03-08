@@ -2,25 +2,27 @@
 @section('title', 'Checkout')
 @section('content')
     <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8 pt-20">
-         <!-- Notifikasi Sukses -->
+        <!-- Notifikasi Sukses -->
         @if (session('success') || session('error') || session('warning') || session('info'))
-           <div id="alert" class="fixed top-4 right-4 md:right-10 z-50">
-               <div class="bg-{{ session('success') ? 'green' : (session('error') ? 'red' : (session('warning') ? 'yellow' : 'blue')) }}-500 text-white px-4 py-3 rounded-lg shadow-md flex items-center justify-between w-full md:w-auto"
-                   role="alert">
-                   <span
-                       class="mr-2">{{ session('success') ?? (session('error') ?? (session('warning') ?? session('info'))) }}</span>
-                   <button type="button" class="close-alert text-white hover:text-gray-300 focus:outline-none">
-                       <span aria-hidden="true">&times;</span>
-                   </button>
-               </div>
-           </div>
-       @endif
+            <div id="alert" class="fixed top-4 right-4 md:right-10 z-50">
+                <div class="bg-{{ session('success') ? 'green' : (session('error') ? 'red' : (session('warning') ? 'yellow' : 'blue')) }}-500 text-white px-4 py-3 rounded-lg shadow-md flex items-center justify-between w-full md:w-auto"
+                    role="alert">
+                    <span
+                        class="mr-2">{{ session('success') ?? (session('error') ?? (session('warning') ?? session('info'))) }}</span>
+                    <button type="button" class="close-alert text-white hover:text-gray-300 focus:outline-none">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <!-- Left Column - Cart Items -->
         <div class="lg:col-span-2 space-y-8">
             <div class="bg-white p-6 rounded-lg shadow-sm">
                 <h2 class="text-xl font-bold mb-6">Your Cart</h2>
 
                 @if ($product)
+                    <!-- Tampilkan produk tunggal -->
                     <div class="flex items-start space-x-4 pb-6 border-b">
                         <div class="w-24 h-24 bg-gray-100 rounded-lg">
                             <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}"
@@ -47,41 +49,101 @@
                                             @php
                                                 $isPromoActive = true;
                                                 if ($promotion->discount_type == 'percentage') {
-                                                    $promoPrice =
-                                                        $product->harga * (1 - $promotion->discount_value / 100);
+                                                    $promoPrice = $product->harga * (1 - $promotion->discount_value / 100);
                                                 } else {
                                                     $promoPrice = $product->harga - $promotion->discount_value;
                                                 }
                                             @endphp
+                                            <!-- Tampilkan harga asli dan harga promo -->
                                             <span class="text-gray-500 line-through">Rp.
                                                 {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                            <br>
                                             Rp. {{ number_format($promoPrice, 0, ',', '.') }}
                                         @endif
                                     @endforeach
                                     @if (!$isPromoActive)
+                                        <!-- Jika tidak ada promo aktif, tampilkan harga normal -->
                                         Rp. {{ number_format($product->harga, 0, ',', '.') }}
                                     @endif
                                 @else
+                                    <!-- Jika tidak ada promo, tampilkan harga normal -->
                                     Rp. {{ number_format($product->harga, 0, ',', '.') }}
                                 @endif
                             </p>
-
-                            <!-- Remove button -->
-                            <form action="{{ route('transaction.remove.product', ['slug' => $product->slug]) }}"
-                                method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 text-sm mt-0 flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Remove
-                                </button>
-                            </form>
                         </div>
                     </div>
+                @elseif (isset($products) && is_array($products) && count($products) > 0)
+                    <!-- Tampilkan semua produk di keranjang -->
+                    @foreach ($products as $item)
+                        @php
+                            $product = $item['product'];
+                            $price = $item['price'];
+                            $originalPrice = $item['original_price'];
+                            $promotions = $item['promotions'];
+                        @endphp
+                        <div class="flex items-start space-x-4 pb-6 border-b">
+                            <div class="w-24 h-24 bg-gray-100 rounded-lg">
+                                <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}"
+                                    alt="{{ $product->name }}" class="w-full h-full object-cover rounded-lg">
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold">{{ $product->name }}</h3>
+                                <p class="text-gray-600 text-sm">
+                                    {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
+                                <div class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
+                                    {{ $product->category->name }} <!-- Display category name -->
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-primary font-semibold">
+                                    @if ($promotions->isNotEmpty())
+                                        @php
+                                            $isPromoActive = false;
+                                            $promoPrice = $originalPrice;
+                                        @endphp
+                                        @foreach ($promotions as $promotion)
+                                            @if ($promotion->product_id == $product->id && $promotion->end_date >= \Carbon\Carbon::now())
+                                                @php
+                                                    $isPromoActive = true;
+                                                    if ($promotion->discount_type == 'percentage') {
+                                                        $promoPrice = $originalPrice * (1 - $promotion->discount_value / 100);
+                                                    } else {
+                                                        $promoPrice = $originalPrice - $promotion->discount_value;
+                                                    }
+                                                @endphp
+                                                <!-- Tampilkan harga asli dan harga promo -->
+                                                <span class="text-gray-500 line-through">Rp.
+                                                    {{ number_format($originalPrice, 0, ',', '.') }}</span>
+                                                <br>
+                                                Rp. {{ number_format($promoPrice, 0, ',', '.') }}
+                                            @endif
+                                        @endforeach
+                                        @if (!$isPromoActive)
+                                            <!-- Jika tidak ada promo aktif, tampilkan harga normal -->
+                                            Rp. {{ number_format($originalPrice, 0, ',', '.') }}
+                                        @endif
+                                    @else
+                                        <!-- Jika tidak ada promo, tampilkan harga normal -->
+                                        Rp. {{ number_format($originalPrice, 0, ',', '.') }}
+                                    @endif
+                                </p>
+                                <!-- Remove button -->
+                                <form action="{{ route('transaction.remove.from.cart', ['slug' => $product->slug]) }}"
+                                    method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 text-sm mt-0 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Remove
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
                 @else
                     <!-- Tampilkan pesan jika keranjang kosong -->
                     <div class="text-center py-8">
@@ -93,7 +155,7 @@
             </div>
 
             <!-- Customer Information -->
-            @if ($product)
+            @if (isset($products) && is_array($products) && count($products) > 0)
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-bold mb-6">Customer Information</h2>
                     <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form"
@@ -138,8 +200,10 @@
                                     required></textarea>
                             </div>
 
-                            <!-- Hidden input for product ID -->
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <!-- Hidden input for product IDs -->
+                            @foreach ($products as $item)
+                                <input type="hidden" name="product_ids[]" value="{{ $item['product']->id }}">
+                            @endforeach
                         </div>
                     </form>
                 </div>
@@ -147,7 +211,7 @@
         </div>
 
         <!-- Right Column - Order Summary -->
-        @if ($product)
+        @if (isset($products) && is_array($products) && count($products) > 0)
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-bold mb-6">Order Summary</h2>
