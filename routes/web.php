@@ -27,13 +27,16 @@ Route::get('/category/{slug}', [CategoryProductController::class, 'showCategory'
 
 Route::prefix('transaction')->name('transaction.')->group(function () {
     // Checkout route
-    Route::get('/checkout/{slug}', [TransactionController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout/{slug?}', [TransactionController::class, 'checkout'])->name('checkout'); // {slug?} membuat slug opsional
 
     // Store route for completing a purchase
     Route::post('/complete-purchase', [TransactionController::class, 'store'])->name('complete.purchase');
 
     // Pending transaction route
     Route::get('/{transaction_code}', [TransactionController::class, 'pending'])->name('pending');
+
+    // Route untuk menghapus produk dari keranjang
+    Route::delete('/remove-product/{slug}', [TransactionController::class, 'removeProduct'])->name('remove.product');
 });
 
 // Routes for checking a transaction

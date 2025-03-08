@@ -10,42 +10,54 @@ use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
-    public function checkout($slug)
-    {
-        // Cari produk berdasarkan slug, bukan ID
-        $product = Product::where('slug', $slug)->firstOrFail();
 
-        // Ambil promo yang masih aktif
-        $promotions = Promotion::where('product_id', $product->id)
-            ->where('end_date', '>=', now())
-            ->get();
-
-        // Harga produk asli
-        $productPrice = $product->harga;
-
-        // Hitung harga promo (jika ada)
-        $promoPrice = $productPrice; // Default: harga normal
-        foreach ($promotions as $promotion) {
-            if ($promotion->discount_type == 'percentage') {
-                $promoPrice = $productPrice * (1 - ($promotion->discount_value / 100));
-            } else {
-                $promoPrice = max(0, $productPrice - $promotion->discount_value);
-            }
-            break; // Ambil promo pertama yang ditemukan
-        }
-
-        // Hitung subtotal
-        $subtotal = $promoPrice;
-
-        // Pajak (jika ada), default ke 0
-        $tax = 0;
-
-        // Hitung total harga
-        $total = $subtotal + $tax;
-
-        // Kirim data ke tampilan checkout
-        return view('frontend.transactions.checkout', compact('product', 'promotions', 'subtotal', 'tax', 'total'));
+    public function checkout($slug = null) // Parameter slug opsional
+{
+    // Jika slug tidak ada, kembalikan view dengan data kosong
+    if (!$slug) {
+        return view('frontend.transactions.checkout', [
+            'product' => null,
+            'promotions' => collect(), // Koleksi kosong untuk promotions
+            'subtotal' => 0,
+            'tax' => 0,
+            'total' => 0,
+        ]);
     }
+
+    // Cari produk berdasarkan slug
+    $product = Product::where('slug', $slug)->firstOrFail();
+
+    // Ambil promo yang masih aktif
+    $promotions = Promotion::where('product_id', $product->id)
+        ->where('end_date', '>=', now())
+        ->get();
+
+    // Harga produk asli
+    $productPrice = $product->harga;
+
+    // Hitung harga promo (jika ada)
+    $promoPrice = $productPrice; // Default: harga normal
+    foreach ($promotions as $promotion) {
+        if ($promotion->discount_type == 'percentage') {
+            $promoPrice = $productPrice * (1 - ($promotion->discount_value / 100));
+        } else {
+            $promoPrice = max(0, $productPrice - $promotion->discount_value);
+        }
+        break; // Ambil promo pertama yang ditemukan
+    }
+
+    // Hitung subtotal
+    $subtotal = $promoPrice;
+
+    // Pajak (jika ada), default ke 0
+    $tax = 0;
+
+    // Hitung total harga
+    $total = $subtotal + $tax;
+
+    // Kirim data ke tampilan checkout
+    return view('frontend.transactions.checkout', compact('product', 'promotions', 'subtotal', 'tax', 'total'));
+}
 
     public function store(Request $request)
     {
@@ -157,4 +169,16 @@ class TransactionController extends Controller
         // Return the view with transaction and product data
         return view('frontend.transactions.cek-transactions', compact('transaction', 'product'));
     }
+
+    public function removeProduct($slug)
+{
+    // Cari produk berdasarkan slug
+    $product = Product::where('slug', $slug)->firstOrFail();
+
+    // Lakukan logika penghapusan produk dari keranjang (sesuaikan dengan kebutuhan Anda)
+    // Contoh: Hapus produk dari session atau database keranjang
+
+    // Redirect kembali ke halaman checkout dengan pesan sukses
+    return redirect()->route('transaction.checkout')->with('success', 'Product removed from cart.');
+}
 }
