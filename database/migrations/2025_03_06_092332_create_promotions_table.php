@@ -18,8 +18,10 @@ return new class extends Migration
             $table->decimal('discount_value', 8, 2); // Nilai diskon
             $table->date('start_date');
             $table->date('end_date');
+            $table->enum('status', ['active', 'expired'])->default('expired'); // Menambahkan kolom status
             $table->timestamps();
         });
+
     }
 
     /**

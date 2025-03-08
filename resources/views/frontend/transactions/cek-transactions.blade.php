@@ -93,24 +93,43 @@
                         <h4 class="text-lg font-semibold mb-3">Purchased Items</h4>
                         <div class="space-y-4">
                             @foreach($transaction->products as $product)
-                                <div class="flex items-center">
-                                    <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden mr-4">
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-semibold">{{ $product->name }}</h5>
-                                        <p class="text-gray-500 text-sm">{{ Str::limit($product->description, 50, '...') }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-bold text-primary">Rp. {{ number_format($transaction->total_price, 2) }}</p>
-                                        @if($transaction->status === 'completed')
-                                            <a href="#" class="text-secondary text-sm font-semibold hover:underline">Download</a>
-                                        @else
-                                            <span class="text-gray-400 text-sm font-semibold">Download (Pending)</span>
-                                        @endif
-                                    </div>
+                            <div class="flex items-center">
+                                <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden mr-4">
+                                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                 </div>
-                            @endforeach
+                                <div class="flex-1">
+                                    <h5 class="font-semibold">{{ $product->name }}</h5>
+                                    <p class="text-gray-500 text-sm">{{ Str::limit($product->description, 50, '...') }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-primary">
+                                        @php
+                                            $promotion = $product->promotions; // Get the single promotion for the product
+                                        @endphp
+
+                                        <!-- Check if there is an active promotion -->
+                                        @if ($promotion && $promotion->status == 'active' && $promotion->end_date >= \Carbon\Carbon::now())
+                                            <!-- If the promotion is active, display the discounted price -->
+                                            @if ($promotion->discount_type == 'percentage')
+                                                Rp. {{ number_format($product->harga * (1 - $promotion->discount_value / 100), 2, ',', '.') }}
+                                            @else
+                                                Rp. {{ number_format($product->harga - $promotion->discount_value, 2, ',', '.') }}
+                                            @endif
+                                        @else
+                                            <!-- If no active promotion, display the regular price -->
+                                            Rp. {{ number_format($product->harga, 2, ',', '.') }}
+                                        @endif
+                                    </p>
+
+                                    @if($transaction->status === 'completed')
+                                        <a href="#" class="text-secondary text-sm font-semibold hover:underline">Download</a>
+                                    @else
+                                        <span class="text-gray-400 text-sm font-semibold">Download (Pending)</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+
                         </div>
                     </div>
                 </div>

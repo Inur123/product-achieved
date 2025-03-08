@@ -20,17 +20,28 @@
             <div class="container mx-auto px-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @if ($products->isEmpty())
-                        <p class="text-center text-gray-500 col-span-full">No products found in this category.</p>
+                        <p class="text-center text-gray-500">No products found in this category.</p>
                     @else
                         @foreach ($products as $product)
+                            @php
+                                // Check if the product is in an active promotion
+                                $isPromo = $product->promotions && $product->promotions->status === 'active' && $product->promotions->end_date >= \Carbon\Carbon::now();
+                            @endphp
                             <a href="{{ route('item-detail', ['slug' => $product->slug]) }}" class="block">
                                 <div class="book-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
                                     <div class="relative">
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                            class="w-full h-48 object-cover">
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+
                                         @if ($product->category)
                                             <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
                                                 {{ $product->category->name }}
+                                            </div>
+                                        @endif
+
+                                        <!-- Promo Label Positioned Bottom-Left -->
+                                        @if ($isPromo)
+                                            <div class="absolute bottom-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                                Promo
                                             </div>
                                         @endif
                                     </div>
@@ -41,7 +52,7 @@
                                         </p>
 
                                         <div class="flex justify-between items-center">
-                                            @if ($product->promotions)
+                                            @if ($isPromo)
                                                 <span class="text-gray-500 text-sm line-through">Rp
                                                     {{ number_format($product->harga, 0, ',', '.') }}</span>
                                                 <span class="text-primary font-bold">
@@ -66,6 +77,7 @@
                         @endforeach
                     @endif
                 </div>
+
 
                 <!-- Pagination -->
                 <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">

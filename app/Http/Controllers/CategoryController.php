@@ -14,11 +14,6 @@ class CategoryController extends Controller
         return view('backend.categories.index', compact('categories'));
     }
 
-    public function create()
-    {
-        // Tidak diperlukan jika menggunakan API
-    }
-
     public function store(Request $request)
     {
         $request->validate([

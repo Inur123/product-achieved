@@ -42,4 +42,9 @@ class Product extends Model
             $product->promotions()->delete();
         });
     }
+
+    public function coupons()
+{
+    return $this->belongsToMany(Coupon::class, 'coupon_product');
+}
 }

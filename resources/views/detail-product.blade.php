@@ -43,32 +43,35 @@
                         $promoPrice = $product->harga;
                     @endphp
                     @foreach ($promotions as $promotion)
-                        @if ($promotion->product_id == $product->id && $promotion->end_date >= \Carbon\Carbon::now())
-                            @php
-                                $isPromoActive = true;
-                            @endphp
-                            <!-- If the promotion is active, display discounted price -->
-                            @if ($promotion->discount_type == 'percentage')
-                                <span class="line-through text-gray-500">Rp.
-                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                Rp.
-                                {{ number_format($product->harga * (1 - $promotion->discount_value / 100), 0, ',', '.') }}
-                            @else
-                                <span class="line-through text-gray-500">Rp.
-                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                Rp. {{ number_format($product->harga - $promotion->discount_value, 0, ',', '.') }}
+                        @if ($promotion->product_id == $product->id)
+                            @if ($promotion->status == 'active' && $promotion->end_date >= \Carbon\Carbon::now())
+                                @php
+                                    $isPromoActive = true;
+                                @endphp
+                                <!-- If the promotion is active, display discounted price -->
+                                @if ($promotion->discount_type == 'percentage')
+                                    <span class="line-through text-gray-500">Rp.
+                                        {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                    Rp.
+                                    {{ number_format($product->harga * (1 - $promotion->discount_value / 100), 0, ',', '.') }}
+                                @else
+                                    <span class="line-through text-gray-500">Rp.
+                                        {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                    Rp. {{ number_format($product->harga - $promotion->discount_value, 0, ',', '.') }}
+                                @endif
                             @endif
                         @endif
                     @endforeach
                     @if (!$isPromoActive)
-                        <!-- If no active promotions, display regular price -->
+                        <!-- If no active promotions or the promotion is expired, display regular price -->
                         Rp. {{ number_format($product->harga, 0, ',', '.') }}
                     @endif
                 @else
-                    <!-- If no promotions are active, display the regular price -->
+                    <!-- If no promotions are available, display regular price -->
                     Rp. {{ number_format($product->harga, 0, ',', '.') }}
                 @endif
             </p>
+
         </div>
 
         <!-- Add to Cart and Buy Buttons at the bottom -->

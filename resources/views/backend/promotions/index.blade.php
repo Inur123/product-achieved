@@ -64,9 +64,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $promotion->end_date }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="px-2 py-1 text-xs font-medium rounded-full {{ now() >= $promotion->start_date && now() <= $promotion->end_date ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ now() >= $promotion->start_date && now() <= $promotion->end_date ? 'Active' : 'Expired' }}
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {{ $promotion->status === 'active'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800' }}">
+                                        {{ $promotion->status === 'active'
+                                            ? 'Active'
+                                            : 'Expired' }}
                                     </span>
                                 </td>
                                 <td
@@ -266,77 +270,61 @@
         </div>
 
         <!-- Edit Promotion Modal -->
-        <div id="edit-promo-modal" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div
-                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">Edit Promotion</h3>
-                        <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    <form id="edit-promo-form" class="space-y-4" method="POST" action=""
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
-                            <select name="product_id" id="edit_product_id"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                                @foreach ($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
-                            <select name="discount_type" id="edit_discount_type"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                                <option value="percentage">Percentage (%)</option>
-                                <option value="fixed">Fixed Amount ($)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Discount Value</label>
-                            <input type="number" name="discount_value" id="edit_discount_value"
-                                placeholder="Enter discount value"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                required>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                <input type="date" name="start_date" id="edit_start_date"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                    required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                <input type="date" name="end_date" id="edit_end_date"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="flex justify-end space-x-4 pt-4">
-                            <button type="button" id="cancel-edit"
-                                class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                                Cancel
-                            </button>
-                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">
-                                Update Promotion
-                            </button>
-                        </div>
-                    </form>
-                    <div id="edit-message" class="mt-4 text-center"></div>
-                </div>
+      <!-- Edit Promotion Modal -->
+<div id="edit-promo-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Edit Promotion</h3>
+                <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
+            <form id="edit-promo-form" class="space-y-4" method="POST" action="" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
+                    <input type="text" id="edit_product_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" readonly>
+                    <input type="hidden" name="product_id" id="edit_product_id">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+                    <select name="discount_type" id="edit_discount_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount (Rp)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Discount Value</label>
+                    <input type="number" name="discount_value" id="edit_discount_value" placeholder="Enter discount value" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="start_date" id="edit_start_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" name="end_date" id="edit_end_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" id="cancel-edit" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">
+                        Update Promotion
+                    </button>
+                </div>
+            </form>
+            <div id="edit-message" class="mt-4 text-center"></div>
         </div>
+    </div>
+</div>
 
     </main>
     <script>
@@ -420,85 +408,57 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tampilkan modal edit saat tombol "Edit" diklik
-            const editButtons = document.querySelectorAll('.edit-promo-btn');
-            const editPromoModal = document.getElementById('edit-promo-modal');
-            const closeEditModal = document.getElementById('close-edit-modal');
-            const cancelEdit = document.getElementById('cancel-edit');
-            const editPromoForm = document.getElementById('edit-promo-form');
+       document.addEventListener('DOMContentLoaded', function() {
+    // Tampilkan modal edit saat tombol "Edit" diklik
+    const editButtons = document.querySelectorAll('.edit-promo-btn');
+    const editPromoModal = document.getElementById('edit-promo-modal');
+    const closeEditModal = document.getElementById('close-edit-modal');
+    const cancelEdit = document.getElementById('cancel-edit');
+    const editPromoForm = document.getElementById('edit-promo-form');
 
-            editButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const promotionId = this.getAttribute('data-id');
-                    const promotionData = JSON.parse(this.getAttribute('data-promotion'));
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const promotionId = this.getAttribute('data-id');
+            const promotionData = JSON.parse(this.getAttribute('data-promotion'));
 
-                    fetch('/products') // Pastikan API ini mengembalikan daftar produk
-                        .then(response => response.json())
-                        .then(products => {
-                            const productSelect = document.getElementById('edit_product_id');
-                            productSelect.innerHTML =
-                            ''; // Kosongkan dropdown sebelum mengisi ulang
+            // Isi form dengan data promotion
+            document.getElementById('edit_product_name').value = promotionData.product.name;
+            document.getElementById('edit_product_id').value = promotionData.product_id;
+            document.getElementById('edit_discount_type').value = promotionData.discount_type;
+            document.getElementById('edit_discount_value').value = promotionData.discount_value;
+            document.getElementById('edit_start_date').value = promotionData.start_date;
+            document.getElementById('edit_end_date').value = promotionData.end_date;
 
-                            // Tambahkan opsi default
-                            const defaultOption = document.createElement('option');
-                            defaultOption.value = '';
-                            defaultOption.textContent = 'Select a product';
-                            productSelect.appendChild(defaultOption);
+            // Set action form
+            editPromoForm.action = `/promotions/${promotionId}`;
 
-                            // Tambahkan opsi produk
-                            products.forEach(product => {
-                                const option = document.createElement('option');
-                                option.value = product.id;
-                                option.textContent = product.name;
+            // Tampilkan modal
+            editPromoModal.classList.remove('hidden');
+        });
+    });
 
-                                // Tandai produk yang sedang diedit
-                                if (product.id == promotionData.product_id) {
-                                    option.selected = true;
-                                }
+    // Sembunyikan modal saat tombol "Close" atau "Cancel" diklik
+    if (closeEditModal) {
+        closeEditModal.addEventListener('click', function() {
+            editPromoModal.classList.add('hidden');
+        });
+    }
 
-                                productSelect.appendChild(option);
-                            });
-                        });
+    if (cancelEdit) {
+        cancelEdit.addEventListener('click', function() {
+            editPromoModal.classList.add('hidden');
+        });
+    }
 
-                    // Isi form dengan data promotion
-                    document.getElementById('edit_discount_type').value = promotionData
-                        .discount_type;
-                    document.getElementById('edit_discount_value').value = promotionData
-                        .discount_value;
-                    document.getElementById('edit_start_date').value = promotionData.start_date;
-                    document.getElementById('edit_end_date').value = promotionData.end_date;
-
-                    // Set action form
-                    editPromoForm.action = `/promotions/${promotionId}`;
-
-                    // Tampilkan modal
-                    editPromoModal.classList.remove('hidden');
-                });
-            });
-
-            // Sembunyikan modal saat tombol "Close" atau "Cancel" diklik
-            if (closeEditModal) {
-                closeEditModal.addEventListener('click', function() {
-                    editPromoModal.classList.add('hidden');
-                });
-            }
-
-            if (cancelEdit) {
-                cancelEdit.addEventListener('click', function() {
-                    editPromoModal.classList.add('hidden');
-                });
-            }
-
-            // Sembunyikan modal saat mengklik di luar modal
-            if (editPromoModal) {
-                editPromoModal.addEventListener('click', function(event) {
-                    if (event.target === editPromoModal) {
-                        editPromoModal.classList.add('hidden');
-                    }
-                });
+    // Sembunyikan modal saat mengklik di luar modal
+    if (editPromoModal) {
+        editPromoModal.addEventListener('click', function(event) {
+            if (event.target === editPromoModal) {
+                editPromoModal.classList.add('hidden');
             }
         });
+    }
+});
     </script>
 
     {{-- Destror --}}

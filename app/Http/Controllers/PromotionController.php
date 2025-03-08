@@ -21,6 +21,7 @@ class PromotionController extends Controller
 
     public function store(Request $request)
 {
+    // Validate incoming request
     $request->validate([
         'product_id' => 'required|exists:products,id',
         'discount_type' => 'required|in:percentage,fixed',
@@ -29,18 +30,20 @@ class PromotionController extends Controller
         'end_date' => 'required|date|after_or_equal:start_date',
     ]);
 
-    // Cek apakah produk sudah memiliki promo aktif
+    // Check if the product already has an active promotion
     $existingPromotion = Promotion::where('product_id', $request->product_id)
-        ->where('end_date', '>=', now()) // Cek apakah promo masih aktif
+        ->where('end_date', '>=', now()) // Check if the promotion is still active
         ->first();
 
     if ($existingPromotion) {
-        return redirect()->back()->with('error', 'Produk ini sudah memiliki promo aktif.');
+        return redirect()->back()->with('error', 'This product already has an active promotion.');
     }
 
+    // Get the product details
     $product = Product::findOrFail($request->product_id);
 
-    Promotion::create([
+    // Create the promotion
+    $promotion = Promotion::create([
         'product_id'     => $request->product_id,
         'discount_type'  => $request->discount_type,
         'discount_value' => $request->discount_value,
@@ -49,8 +52,13 @@ class PromotionController extends Controller
         'original_price' => $product->harga,
     ]);
 
+    // Update the status based on the current date and the promotion's start and end dates
+    $promotion->updateStatus();
+
+    // Redirect with success message
     return redirect()->route('promotions.index')->with('success', 'Promotion created successfully.');
 }
+
 
 
     public function edit(Promotion $promotion)
@@ -60,19 +68,26 @@ class PromotionController extends Controller
     }
 
     public function update(Request $request, Promotion $promotion)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+{
+    // Validate incoming request
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'discount_type' => 'required|in:percentage,fixed',
+        'discount_value' => 'required|numeric|min:0',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+    ]);
 
-        $promotion->update($request->all());
+    // Update the promotion with the validated data
+    $promotion->update($request->all());
 
-        return redirect()->route('promotions.index')->with('success', 'Promotion updated successfully.');
-    }
+    // Update the status based on the current date and the promotion's start and end dates
+    $promotion->updateStatus();
+
+    // Redirect with success message
+    return redirect()->route('promotions.index')->with('success', 'Promotion updated successfully.');
+}
+
 
     public function destroy(Promotion $promotion)
     {
