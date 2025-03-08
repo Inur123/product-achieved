@@ -15,10 +15,12 @@ class AllProductPromoController extends Controller
     // Ambil semua kategori dari database
     $categories = Category::all();
 
-    // Query untuk produk yang memiliki promosi masih berlaku
-    $query = Product::whereHas('promotions', function ($query) {
-        $query->where('end_date', '>=', now()); // Hanya promosi yang masih berlaku
-    })->with(['promotions', 'category']); // Load relasi promotions dan category
+    // Query untuk produk yang memiliki promosi masih berlaku dan statusnya aktif
+    $query = Product::where('status', 'active') // Hanya produk yang aktif
+        ->whereHas('promotions', function ($query) {
+            $query->where('end_date', '>=', now()); // Hanya promosi yang masih berlaku
+        })
+        ->with(['promotions', 'category']); // Load relasi promotions dan category
 
     // Filter berdasarkan kategori menggunakan slug
     if ($request->has('category') && $request->category !== 'all') {
@@ -33,4 +35,5 @@ class AllProductPromoController extends Controller
 
     return view('all-products-promo', compact('products', 'categories'));
 }
+
 }

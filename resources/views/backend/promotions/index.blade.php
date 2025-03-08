@@ -55,7 +55,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                                     {{ $index + 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                        {{ $promotion->product->name }}</td>
+                                    {{ $promotion->product->name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     {{ $promotion->discount_type == 'percentage' ? $promotion->discount_value . '% ' : 'Rp.' . $promotion->discount_value }}
                                 </td>
@@ -213,7 +213,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
                             <select name="product_id" id="product_id"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                required>
                                 <option value="">Select a category</option>
                                 @foreach ($products as $product)
                                     <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -223,7 +224,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
                             <select name="discount_type"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                required>
                                 <option value="percentage">Percentage (%)</option>
                                 <option value="fixed">Fixed Amount (Rp)</option>
                             </select>
@@ -431,8 +433,35 @@
                     const promotionId = this.getAttribute('data-id');
                     const promotionData = JSON.parse(this.getAttribute('data-promotion'));
 
+                    fetch('/products') // Pastikan API ini mengembalikan daftar produk
+                        .then(response => response.json())
+                        .then(products => {
+                            const productSelect = document.getElementById('edit_product_id');
+                            productSelect.innerHTML =
+                            ''; // Kosongkan dropdown sebelum mengisi ulang
+
+                            // Tambahkan opsi default
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.textContent = 'Select a product';
+                            productSelect.appendChild(defaultOption);
+
+                            // Tambahkan opsi produk
+                            products.forEach(product => {
+                                const option = document.createElement('option');
+                                option.value = product.id;
+                                option.textContent = product.name;
+
+                                // Tandai produk yang sedang diedit
+                                if (product.id == promotionData.product_id) {
+                                    option.selected = true;
+                                }
+
+                                productSelect.appendChild(option);
+                            });
+                        });
+
                     // Isi form dengan data promotion
-                    document.getElementById('edit_product_id').value = promotionData.product_id;
                     document.getElementById('edit_discount_type').value = promotionData
                         .discount_type;
                     document.getElementById('edit_discount_value').value = promotionData

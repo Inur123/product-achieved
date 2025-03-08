@@ -15,7 +15,8 @@ class AllProductController extends Controller
 
         $query = Product::with(['promotions' => function ($query) {
             $query->where('end_date', '>=', now()); // Hanya promosi yang masih berlaku
-        }]);
+        }])
+        ->where('status', 'active'); // Hanya produk yang statusnya "active"
 
         // Filter berdasarkan kategori menggunakan slug
         if ($request->has('category') && $request->category !== 'all') {
@@ -29,4 +30,5 @@ class AllProductController extends Controller
 
         return view('all-products', compact('products', 'categories'));
     }
+
 }

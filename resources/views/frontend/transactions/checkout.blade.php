@@ -86,7 +86,7 @@
                     <!-- Tampilkan pesan jika keranjang kosong -->
                     <div class="text-center py-8">
                         <p class="text-gray-600">Your cart is empty.</p>
-                        <a href="{{ route('home') }}"
+                        <a href="{{ route('all-product') }}"
                             class="mt-4 inline-block px-6 py-2 bg-primary text-white rounded-lg">Continue Shopping</a>
                     </div>
                 @endif
