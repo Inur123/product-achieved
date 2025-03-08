@@ -29,6 +29,7 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
     // Checkout route
     Route::get('/checkout/{slug?}', [TransactionController::class, 'checkout'])->name('checkout'); // {slug?} membuat slug opsional
 
+    Route::post('/checkout', [TransactionController::class, 'store'])->name('transaction.complete.purchase');
     // Store route for completing a purchase
     Route::post('/complete-purchase', [TransactionController::class, 'store'])->name('complete.purchase');
 

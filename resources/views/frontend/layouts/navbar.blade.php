@@ -57,7 +57,7 @@
         <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Cek Transaksi</a>
     </nav>
     <div class="mt-auto">
-        <a href="#"
+        <a href="{{ route('transaction.checkout') }}"
             class="bg-primary text-white px-4 py-2 rounded-full font-bold hover:bg-opacity-90 transition flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">

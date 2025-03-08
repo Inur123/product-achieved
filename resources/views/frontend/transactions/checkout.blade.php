@@ -49,7 +49,8 @@
                                             @php
                                                 $isPromoActive = true;
                                                 if ($promotion->discount_type == 'percentage') {
-                                                    $promoPrice = $product->harga * (1 - $promotion->discount_value / 100);
+                                                    $promoPrice =
+                                                        $product->harga * (1 - $promotion->discount_value / 100);
                                                 } else {
                                                     $promoPrice = $product->harga - $promotion->discount_value;
                                                 }
@@ -90,7 +91,8 @@
                                 <h3 class="font-semibold">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm">
                                     {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
-                                <div class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
+                                <div
+                                    class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
                                     {{ $product->category->name }} <!-- Display category name -->
                                 </div>
                             </div>
@@ -106,7 +108,8 @@
                                                 @php
                                                     $isPromoActive = true;
                                                     if ($promotion->discount_type == 'percentage') {
-                                                        $promoPrice = $originalPrice * (1 - $promotion->discount_value / 100);
+                                                        $promoPrice =
+                                                            $originalPrice * (1 - $promotion->discount_value / 100);
                                                     } else {
                                                         $promoPrice = $originalPrice - $promotion->discount_value;
                                                     }
@@ -155,7 +158,7 @@
             </div>
 
             <!-- Customer Information -->
-            @if (isset($products) && is_array($products) && count($products) > 0)
+            @if ($product || (isset($products) && is_array($products) && count($products) > 0))
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-bold mb-6">Customer Information</h2>
                     <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form"
@@ -201,9 +204,13 @@
                             </div>
 
                             <!-- Hidden input for product IDs -->
-                            @foreach ($products as $item)
-                                <input type="hidden" name="product_ids[]" value="{{ $item['product']->id }}">
-                            @endforeach
+                            @if (isset($products) && is_array($products) && count($products) > 0)
+                                @foreach ($products as $item)
+                                    <input type="hidden" name="product_ids[]" value="{{ $item['product']->id }}">
+                                @endforeach
+                            @elseif (isset($product))
+                                <input type="hidden" name="product_ids[]" value="{{ $product->id }}">
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -211,54 +218,55 @@
         </div>
 
         <!-- Right Column - Order Summary -->
-        @if (isset($products) && is_array($products) && count($products) > 0)
-            <div class="lg:col-span-1">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-xl font-bold mb-6">Order Summary</h2>
-                    <div class="space-y-4">
-                        <!-- Subtotal -->
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Subtotal</span>
-                            <span class="font-medium">Rp. {{ number_format($subtotal, 0, ',', '.') }}</span>
-                        </div>
+  <!-- Right Column - Order Summary -->
+@if ($product || (isset($products) && is_array($products) && count($products) > 0))
+<div class="lg:col-span-1">
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+        <h2 class="text-xl font-bold mb-6">Order Summary</h2>
+        <div class="space-y-4">
+            <!-- Subtotal -->
+            <div class="flex justify-between">
+                <span class="text-gray-600">Subtotal</span>
+                <span class="font-medium">Rp. {{ number_format($subtotal, 0, ',', '.') }}</span>
+            </div>
 
-                        <!-- Total -->
-                        <div class="border-t pt-4">
-                            <div class="flex justify-between">
-                                <span class="font-bold">Total</span>
-                                <span class="font-bold text-primary">Rp. {{ number_format($total, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tombol "Complete Purchase" -->
-                    <button type="submit" form="checkout-form"
-                        class="w-full bg-primary text-white py-3 rounded-lg font-medium mt-6">
-                        Complete Purchase
-                    </button>
-
-                    <p class="text-sm text-gray-500 text-center mt-4">
-                        By completing your purchase, you agree to our
-                        <a href="#" class="text-primary">Terms of Service</a> and
-                        <a href="#" class="text-primary">Privacy Policy</a>.
-                    </p>
-                </div>
-
-                <!-- Informasi Rekening Bank -->
-                <div class="bg-white p-6 rounded-lg shadow-sm mt-6">
-                    <h3 class="text-lg font-semibold mb-4">Payment Instructions</h3>
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <p class="text-gray-700 font-medium mb-2">Please transfer the exact amount to the following bank
-                            account:</p>
-                        <div class="space-y-2">
-                            <p class="text-gray-700"><span class="font-bold">Bank Name:</span> Bank Central Asia (BCA)</p>
-                            <p class="text-gray-700"><span class="font-bold">Account Number:</span> 1234567890</p>
-                            <p class="text-gray-700"><span class="font-bold">Account Name:</span> PT Achieved Indonesia</p>
-                        </div>
-                    </div>
+            <!-- Total -->
+            <div class="border-t pt-4">
+                <div class="flex justify-between">
+                    <span class="font-bold">Total</span>
+                    <span class="font-bold text-primary">Rp. {{ number_format($total, 0, ',', '.') }}</span>
                 </div>
             </div>
-        @endif
+        </div>
+
+        <!-- Tombol "Complete Purchase" -->
+        <button type="submit" form="checkout-form"
+            class="w-full bg-primary text-white py-3 rounded-lg font-medium mt-6">
+            Complete Purchase
+        </button>
+
+        <p class="text-sm text-gray-500 text-center mt-4">
+            By completing your purchase, you agree to our
+            <a href="#" class="text-primary">Terms of Service</a> and
+            <a href="#" class="text-primary">Privacy Policy</a>.
+        </p>
+    </div>
+
+    <!-- Informasi Rekening Bank -->
+    <div class="bg-white p-6 rounded-lg shadow-sm mt-6">
+        <h3 class="text-lg font-semibold mb-4">Payment Instructions</h3>
+        <div class="bg-blue-50 p-4 rounded-lg">
+            <p class="text-gray-700 font-medium mb-2">Please transfer the exact amount to the following bank
+                account:</p>
+            <div class="space-y-2">
+                <p class="text-gray-700"><span class="font-bold">Bank Name:</span> Bank Central Asia (BCA)</p>
+                <p class="text-gray-700"><span class="font-bold">Account Number:</span> 1234567890</p>
+                <p class="text-gray-700"><span class="font-bold">Account Name:</span> PT Achieved Indonesia</p>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
     </div>
 @endsection
 

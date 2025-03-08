@@ -157,83 +157,83 @@ class TransactionController extends Controller
     }
 
     public function store(Request $request)
-{
-    // Validate the input data
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'phone' => 'required|string|max:15',
-        'address' => 'required|string',
-        'product_ids' => 'required|array', // Ensure product IDs are provided
-        'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Max 2MB
-    ]);
+    {
+        // Validate the input data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:15',
+            'address' => 'required|string',
+            'product_ids' => 'required|array', // Ensure product IDs are provided
+            'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Max 2MB
+        ]);
 
-    // Generate a unique transaction code using Str::random()
-    $transactionCode = 'ACH-' . strtoupper(Str::random(15));
+        // Generate a unique transaction code using Str::random()
+        $transactionCode = 'ACH-' . strtoupper(Str::random(15));
 
-    // Start a new transaction
-    $transaction = Transaction::create([
-        'transaction_code' => $transactionCode, // Assign the generated transaction code
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'address' => $request->address,
-        'status' => 'pending',
-        'total_price' => 0, // Akan diupdate setelah menghitung total harga
-        'proof_of_payment' => '', // Akan diupdate setelah upload file
-    ]);
+        // Start a new transaction
+        $transaction = Transaction::create([
+            'transaction_code' => $transactionCode, // Assign the generated transaction code
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'status' => 'pending',
+            'total_price' => 0, // Akan diupdate setelah menghitung total harga
+            'proof_of_payment' => '', // Akan diupdate setelah upload file
+        ]);
 
-    $totalPrice = 0;
+        $totalPrice = 0;
 
-    // Handle file upload
-    if ($request->hasFile('proof_of_payment')) {
-        $file = $request->file('proof_of_payment');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('proofs', $fileName, 'public'); // Simpan file di folder 'storage/app/public/proofs'
-        $transaction->proof_of_payment = $filePath;
-    }
-
-    // Attach products to the transaction with promo calculation
-    foreach ($request->product_ids as $productId) {
-        $product = Product::find($productId);
-        if ($product) {
-            // Cek apakah ada promo aktif untuk produk ini
-            $promotion = Promotion::where('product_id', $product->id)
-                ->where('end_date', '>=', now())
-                ->first();
-
-            // Hitung harga promo jika ada
-            $productPrice = $product->harga;
-            if ($promotion) {
-                if ($promotion->discount_type == 'percentage') {
-                    $productPrice = $product->harga * (1 - ($promotion->discount_value / 100));
-                } else {
-                    $productPrice = max(0, $product->harga - $promotion->discount_value);
-                }
-            }
-
-            // Simpan transaksi produk dengan harga yang sesuai
-            $transaction->products()->attach($product->id, [
-                'quantity' => 1, // Anggap jumlahnya 1, bisa diubah sesuai kebutuhan
-                'price' => $productPrice,
-            ]);
-
-            // Tambahkan harga ke total transaksi
-            $totalPrice += $productPrice;
+        // Handle file upload
+        if ($request->hasFile('proof_of_payment')) {
+            $file = $request->file('proof_of_payment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('proofs', $fileName, 'public'); // Simpan file di folder 'storage/app/public/proofs'
+            $transaction->proof_of_payment = $filePath;
         }
+
+        // Attach products to the transaction with promo calculation
+        foreach ($request->product_ids as $productId) {
+            $product = Product::find($productId);
+            if ($product) {
+                // Cek apakah ada promo aktif untuk produk ini
+                $promotion = Promotion::where('product_id', $product->id)
+                    ->where('end_date', '>=', now())
+                    ->first();
+
+                // Hitung harga promo jika ada
+                $productPrice = $product->harga;
+                if ($promotion) {
+                    if ($promotion->discount_type == 'percentage') {
+                        $productPrice = $product->harga * (1 - ($promotion->discount_value / 100));
+                    } else {
+                        $productPrice = max(0, $product->harga - $promotion->discount_value);
+                    }
+                }
+
+                // Simpan transaksi produk dengan harga yang sesuai
+                $transaction->products()->attach($product->id, [
+                    'quantity' => 1, // Anggap jumlahnya 1, bisa diubah sesuai kebutuhan
+                    'price' => $productPrice,
+                ]);
+
+                // Tambahkan harga ke total transaksi
+                $totalPrice += $productPrice;
+            }
+        }
+
+        // Update total price setelah semua produk ditambahkan
+        $transaction->total_price = $totalPrice;
+        $transaction->save();
+
+        // Clear the cart
+        session()->forget('cart');
+
+        // Redirect ke halaman pending transaksi
+        return redirect()->route('transaction.pending', ['transaction_code' => $transactionCode])
+            ->with('success', 'Transaction successful!');
     }
-
-    // Update total price setelah semua produk ditambahkan
-    $transaction->total_price = $totalPrice;
-    $transaction->save();
-
-    // Clear the cart
-    session()->forget('cart');
-
-    // Redirect ke halaman pending transaksi
-    return redirect()->route('transaction.pending', ['transaction_code' => $transactionCode])
-        ->with('success', 'Transaction successful!');
-}
 
 
     // Tampilan halaman sukses setelah transaksi berhasil

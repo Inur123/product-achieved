@@ -100,9 +100,9 @@
 
             <!-- Buy Button -->
             <button class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition"
-                onclick="window.location.href='{{ route('transaction.checkout') }}'">
-                Beli
-            </button>
+    onclick="window.location.href='{{ route('transaction.checkout', ['slug' => $product->slug]) }}'">
+    Beli
+</button>
 
         </div>
     </div>
