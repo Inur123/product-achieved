@@ -238,12 +238,21 @@
                 </div>
             </div>
         </div>
-
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Coupon Code</label>
+            <div class="flex space-x-2">
+                <input type="text" placeholder="Enter coupon code" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium">
+                    Apply
+                </button>
+            </div>
+        </div>
         <!-- Tombol "Complete Purchase" -->
         <button type="submit" form="checkout-form"
             class="w-full bg-primary text-white py-3 rounded-lg font-medium mt-6">
             Complete Purchase
         </button>
+
 
         <p class="text-sm text-gray-500 text-center mt-4">
             By completing your purchase, you agree to our
