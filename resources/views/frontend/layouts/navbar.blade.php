@@ -16,10 +16,16 @@
                 <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
             </nav>
             <div class="flex items-center space-x-4">
-                <a href="{{ route('transaction.checkout') }}" class="text-dark hover:text-primary hidden md:flex">
+                <a href="{{ route('transaction.checkout') }}" class="text-dark hover:text-primary hidden md:flex relative">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
+                    <!-- Indicator for the number of items in the cart -->
+                    @if ($cartCount > 0)
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full px-1.5 py-0.5">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
                 </a>
                 <button id="mobile-menu-button" class="md:hidden text-primary focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
@@ -58,14 +64,19 @@
     </nav>
     <div class="mt-auto">
         <a href="{{ route('transaction.checkout') }}"
-            class="bg-primary text-white px-4 py-2 rounded-full font-bold hover:bg-opacity-90 transition flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 8m12-8l2 8M9 21a1 1 0 102 0m6 0a1 1 0 102 0" />
-            </svg>
-            Checkout
-        </a>
+        class="bg-primary text-white px-6 py-2.5 rounded-full font-bold hover:bg-opacity-90 transition flex items-center gap-2.5 relative justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+            <path d="M1 1.75A.75.75 0 0 1 1.75 1h1.628a1.75 1.75 0 0 1 1.734 1.51L5.18 3a65.25 65.25 0 0 1 13.36 1.412.75.75 0 0 1 .58.875 48.645 48.645 0 0 1-1.618 6.2.75.75 0 0 1-.712.513H6a2.503 2.503 0 0 0-2.292 1.5H17.25a.75.75 0 0 1 0 1.5H2.76a.75.75 0 0 1-.748-.807 4.002 4.002 0 0 1 2.716-3.486L3.626 2.716a.25.25 0 0 0-.248-.216H1.75A.75.75 0 0 1 1 1.75ZM6 17.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM15.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+          </svg>
+
+        Checkout
+
+        @if ($cartCount > 0)
+            <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs font-medium min-w-[20px] h-[20px] rounded-full flex items-center justify-center shadow-sm border border-white">
+                {{ $cartCount }}
+            </span>
+        @endif
+    </a>
 
         <div class="flex justify-center space-x-6 mt-6">
             <a href="#" class="text-gray-400 hover:text-primary">
