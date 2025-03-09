@@ -359,37 +359,50 @@ class TransactionController extends Controller
     }
 
     public function applyCoupon(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'code' => 'required|string',
+        'product_id' => 'required|exists:products,id', // Validate product_id exists
+    ]);
 
-        $coupon = Coupon::where('code', $request->code)
-            ->where('status', 'active')
-            ->first();
+    $coupon = Coupon::where('code', $request->code)
+        ->where('status', 'active')
+        ->first();
 
-        if (!$coupon) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid coupon code.',
-            ]);
-        }
-
-        // Cek apakah kupon sudah mencapai batas limit
-        if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Coupon has reached its usage limit.',
-            ]);
-        }
-
-        // Simpan kode kupon ke session
-
-
+    if (!$coupon) {
         return response()->json([
-            'success' => true,
-            'discount' => $coupon->discount_value,
-            'discount_type' => $coupon->discount_type,
+            'success' => false,
+            'message' => 'Invalid coupon code.',
         ]);
     }
+
+    // Check if coupon has reached its usage limit
+    if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Coupon has reached its usage limit.',
+        ]);
+    }
+
+    // Check if the product is associated with this coupon
+    $validProduct = $coupon->products()
+        ->where('product_id', $request->product_id)
+        ->exists();
+
+    if (!$validProduct) {
+        return response()->json([
+            'success' => false,
+            'message' => 'This coupon cannot be applied to the selected product.',
+        ]);
+    }
+
+    // Save coupon code to session
+
+
+    return response()->json([
+        'success' => true,
+        'discount' => $coupon->discount_value,
+        'discount_type' => $coupon->discount_type,
+    ]);
+}
 }

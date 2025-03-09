@@ -328,23 +328,41 @@
     const discountSection = document.getElementById('discount-section');
     const discountValue = document.getElementById('discount-value');
     const totalPrice = document.getElementById('total-price');
-    const subtotal = {{ $subtotal }}; // Subtotal dari backend
+    const subtotal = {{ $subtotal }}; // Subtotal from backend
+
+    // Get product ID from the form
+    let productId = null;
+    const productInputs = document.querySelectorAll('input[name="product_ids[]"]');
+    if (productInputs && productInputs.length > 0) {
+        productId = productInputs[0].value; // Use the first product if multiple exist
+    }
 
     applyCouponButton.addEventListener('click', function() {
         const couponCode = couponCodeInput.value;
 
+        if (!couponCode) {
+            couponMessage.textContent = 'Please enter a coupon code';
+            return;
+        }
+
+        // Create form data instead of JSON
+        const formData = new FormData();
+        formData.append('code', couponCode);
+        formData.append('product_id', productId);
+        formData.append('_token', '{{ csrf_token() }}');
+
         fetch('{{ route("transaction.apply.coupon") }}', {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ code: couponCode })
+            }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                couponMessage.textContent = '';
+                couponMessage.textContent = 'Coupon applied successfully!';
+                couponMessage.className = 'text-sm text-green-500 mt-2';
                 discountSection.classList.remove('hidden');
 
                 let discountAmount = 0;
@@ -360,14 +378,28 @@
                 // Format the discount and total price without decimals using toLocaleString
                 discountValue.textContent = `Rp. ${discountAmount.toLocaleString('id-ID')}`;
                 totalPrice.textContent = `Rp. ${(Math.round(subtotal - discountAmount)).toLocaleString('id-ID')}`;
+
+                // Add a hidden input to the checkout form to include the coupon
+                const checkoutForm = document.getElementById('checkout-form');
+                let couponInput = document.querySelector('input[name="coupon_code"]');
+                if (!couponInput) {
+                    couponInput = document.createElement('input');
+                    couponInput.type = 'hidden';
+                    couponInput.name = 'coupon_code';
+                    checkoutForm.appendChild(couponInput);
+                }
+                couponInput.value = couponCode;
             } else {
                 couponMessage.textContent = data.message;
+                couponMessage.className = 'text-sm text-red-500 mt-2';
                 discountSection.classList.add('hidden');
                 totalPrice.textContent = `Rp. ${Math.round(subtotal).toLocaleString('id-ID')}`;
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            couponMessage.textContent = 'An error occurred. Please try again.';
+            couponMessage.className = 'text-sm text-red-500 mt-2';
         });
     });
 });
