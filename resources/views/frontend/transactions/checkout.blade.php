@@ -18,15 +18,17 @@
 
         <!-- Left Column - Cart Items -->
         <div class="lg:col-span-2 space-y-8">
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold mb-6">Your Cart</h2>
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-bold mb-1 md:mb-1">Your Cart</h2>
 
                 @if ($product)
                     <!-- Display single product -->
-                    <div class="flex items-start space-x-4 pb-6 border-b">
-                        <div class="w-24 h-24 bg-gray-100 rounded-lg">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}"
-                                alt="{{ $product->name }}" class="w-full h-full object-cover rounded-lg">
+                    <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4 py-2 md:py-1 border-b">
+
+                            <div class="w-full md:w-24 h-24 bg-gray-100 rounded-lg hidden md:block">
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                            @endif
                         </div>
                         <div class="flex-1">
                             <h3 class="font-semibold">{{ $product->name }}</h3>
@@ -58,11 +60,13 @@
                                                     $promoPrice = $product->harga - $promotion->discount_value;
                                                 }
                                             @endphp
-                                            <!-- Display original price and promo price -->
-                                            <span class="text-gray-500 line-through">Rp.
-                                                {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                            <br>
-                                            Rp. {{ number_format($promoPrice, 0, ',', '.') }}
+                                             <div class="flex sm:block font-semibold">
+                                                <span class="text-gray-500 line-through mr-2">Rp.
+                                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                                <span class="text-primary sm:ml-2">Rp.
+                                                    {{ number_format($promoPrice, 0, ',', '.') }}</span>
+                                            </div>
+
                                         @endif
                                     @endforeach
                                     @if (!$isPromoActive)
@@ -85,21 +89,31 @@
                             $originalPrice = $item['original_price'];
                             $promotions = $item['promotions'];
                         @endphp
-                        <div class="flex items-start space-x-4 pb-6 border-b">
-                            <div class="w-24 h-24 bg-gray-100 rounded-lg">
-                                <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg') }}"
-                                    alt="{{ $product->name }}" class="w-full h-full object-cover rounded-lg">
+                        <div
+                            class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4 py-2 border-b">
+
+                            <!-- Gambar Produk (Hanya tampil di mode Desktop) -->
+                            <div class="w-full md:w-24 h-24 bg-gray-100 rounded-lg hidden md:block">
+                                @if ($product->image)
+                                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                        class="w-full h-full object-cover rounded-lg">
+                                @endif
                             </div>
+
+                            <!-- Informasi Produk -->
                             <div class="flex-1">
                                 <h3 class="font-semibold">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm">
-                                    {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
+                                    {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}
+                                </p>
                                 <div
                                     class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
-                                    {{ $product->category->name }} <!-- Display category name -->
+                                    {{ $product->category->name }} <!-- Nama Kategori -->
                                 </div>
                             </div>
-                            <div class="text-right">
+
+                            <!-- Harga dan Tombol Hapus -->
+                            <div class="text-left md:text-right">
                                 <p class="text-primary font-semibold">
                                     @if ($promotions->isNotEmpty())
                                         @php
@@ -120,28 +134,29 @@
                                                         $promoPrice = $originalPrice - $promotion->discount_value;
                                                     }
                                                 @endphp
-                                                <!-- Display original price and promo price -->
-                                                <span class="text-gray-500 line-through">Rp.
-                                                    {{ number_format($originalPrice, 0, ',', '.') }}</span>
-                                                <br>
-                                                Rp. {{ number_format($promoPrice, 0, ',', '.') }}
+                                                <div class="flex sm:block font-semibold">
+                                                    <span class="text-gray-500 line-through mr-2">Rp.
+                                                        {{ number_format($originalPrice, 0, ',', '.') }}</span>
+                                                    <span class="text-primary sm:ml-2">Rp.
+                                                        {{ number_format($promoPrice, 0, ',', '.') }}</span>
+                                                </div>
                                             @endif
                                         @endforeach
                                         @if (!$isPromoActive)
-                                            <!-- If no active promotions, display regular price -->
                                             Rp. {{ number_format($originalPrice, 0, ',', '.') }}
                                         @endif
                                     @else
-                                        <!-- If no promotions, display regular price -->
                                         Rp. {{ number_format($originalPrice, 0, ',', '.') }}
                                     @endif
                                 </p>
-                                <!-- Remove button -->
+
+                                <!-- Tombol Hapus -->
                                 <form action="{{ route('transaction.remove.from.cart', ['slug' => $product->slug]) }}"
                                     method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 text-sm mt-0 flex items-center">
+                                    <button type="submit"
+                                        class="text-red-500 text-sm mt-2 md:mt-0 flex items-center md:justify-start">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -168,7 +183,8 @@
             @if ($product || (isset($products) && is_array($products) && count($products) > 0))
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-bold mb-6">Customer Information</h2>
-                    <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form" enctype="multipart/form-data">
+                    <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="space-y-4">
                             <!-- Input fields untuk customer information -->
@@ -198,7 +214,8 @@
                                     <input type="file" name="proof_of_payment"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                         required>
-                                    <p class="text-sm text-gray-500 mt-1">Upload your payment proof (JPG, PNG, or PDF, max 2MB).</p>
+                                    <p class="text-sm text-gray-500 mt-1">Upload your payment proof (JPG, PNG, or PDF, max
+                                        2MB).</p>
                                 </div>
                             </div>
 
@@ -249,7 +266,8 @@
                         <div class="border-t pt-4">
                             <div class="flex justify-between">
                                 <span class="font-bold">Total</span>
-                                <span id="total-price" class="font-bold text-primary">Rp. {{ number_format($total, 0, ',', '.') }}</span>
+                                <span id="total-price" class="font-bold text-primary">Rp.
+                                    {{ number_format($total, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -321,87 +339,88 @@
 </script>
 
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    const applyCouponButton = document.getElementById('apply-coupon');
-    const couponCodeInput = document.getElementById('coupon-code');
-    const couponMessage = document.getElementById('coupon-message');
-    const discountSection = document.getElementById('discount-section');
-    const discountValue = document.getElementById('discount-value');
-    const totalPrice = document.getElementById('total-price');
-    const subtotal = {{ $subtotal }}; // Subtotal from backend
+    document.addEventListener('DOMContentLoaded', function() {
+        const applyCouponButton = document.getElementById('apply-coupon');
+        const couponCodeInput = document.getElementById('coupon-code');
+        const couponMessage = document.getElementById('coupon-message');
+        const discountSection = document.getElementById('discount-section');
+        const discountValue = document.getElementById('discount-value');
+        const totalPrice = document.getElementById('total-price');
+        const subtotal = {{ $subtotal }}; // Subtotal from backend
 
-    // Get product ID from the form
-    let productId = null;
-    const productInputs = document.querySelectorAll('input[name="product_ids[]"]');
-    if (productInputs && productInputs.length > 0) {
-        productId = productInputs[0].value; // Use the first product if multiple exist
-    }
-
-    applyCouponButton.addEventListener('click', function() {
-        const couponCode = couponCodeInput.value;
-
-        if (!couponCode) {
-            couponMessage.textContent = 'Please enter a coupon code';
-            return;
+        // Get product ID from the form
+        let productId = null;
+        const productInputs = document.querySelectorAll('input[name="product_ids[]"]');
+        if (productInputs && productInputs.length > 0) {
+            productId = productInputs[0].value; // Use the first product if multiple exist
         }
 
-        // Create form data instead of JSON
-        const formData = new FormData();
-        formData.append('code', couponCode);
-        formData.append('product_id', productId);
-        formData.append('_token', '{{ csrf_token() }}');
+        applyCouponButton.addEventListener('click', function() {
+            const couponCode = couponCodeInput.value;
 
-        fetch('{{ route("transaction.apply.coupon") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            if (!couponCode) {
+                couponMessage.textContent = 'Please enter a coupon code';
+                return;
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                couponMessage.textContent = 'Coupon applied successfully!';
-                couponMessage.className = 'text-sm text-green-500 mt-2';
-                discountSection.classList.remove('hidden');
 
-                let discountAmount = 0;
-                if (data.discount_type === 'percentage') {
-                    discountAmount = subtotal * (data.discount / 100);
-                } else {
-                    discountAmount = data.discount;
-                }
+            // Create form data instead of JSON
+            const formData = new FormData();
+            formData.append('code', couponCode);
+            formData.append('product_id', productId);
+            formData.append('_token', '{{ csrf_token() }}');
 
-                // Round the discount amount to avoid decimal places
-                discountAmount = Math.round(discountAmount);
+            fetch('{{ route('transaction.apply.coupon') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        couponMessage.textContent = 'Coupon applied successfully!';
+                        couponMessage.className = 'text-sm text-green-500 mt-2';
+                        discountSection.classList.remove('hidden');
 
-                // Format the discount and total price without decimals using toLocaleString
-                discountValue.textContent = `Rp. ${discountAmount.toLocaleString('id-ID')}`;
-                totalPrice.textContent = `Rp. ${(Math.round(subtotal - discountAmount)).toLocaleString('id-ID')}`;
+                        let discountAmount = 0;
+                        if (data.discount_type === 'percentage') {
+                            discountAmount = subtotal * (data.discount / 100);
+                        } else {
+                            discountAmount = data.discount;
+                        }
 
-                // Add a hidden input to the checkout form to include the coupon
-                const checkoutForm = document.getElementById('checkout-form');
-                let couponInput = document.querySelector('input[name="coupon_code"]');
-                if (!couponInput) {
-                    couponInput = document.createElement('input');
-                    couponInput.type = 'hidden';
-                    couponInput.name = 'coupon_code';
-                    checkoutForm.appendChild(couponInput);
-                }
-                couponInput.value = couponCode;
-            } else {
-                couponMessage.textContent = data.message;
-                couponMessage.className = 'text-sm text-red-500 mt-2';
-                discountSection.classList.add('hidden');
-                totalPrice.textContent = `Rp. ${Math.round(subtotal).toLocaleString('id-ID')}`;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            couponMessage.textContent = 'An error occurred. Please try again.';
-            couponMessage.className = 'text-sm text-red-500 mt-2';
+                        // Round the discount amount to avoid decimal places
+                        discountAmount = Math.round(discountAmount);
+
+                        // Format the discount and total price without decimals using toLocaleString
+                        discountValue.textContent = `Rp. ${discountAmount.toLocaleString('id-ID')}`;
+                        totalPrice.textContent =
+                            `Rp. ${(Math.round(subtotal - discountAmount)).toLocaleString('id-ID')}`;
+
+                        // Add a hidden input to the checkout form to include the coupon
+                        const checkoutForm = document.getElementById('checkout-form');
+                        let couponInput = document.querySelector('input[name="coupon_code"]');
+                        if (!couponInput) {
+                            couponInput = document.createElement('input');
+                            couponInput.type = 'hidden';
+                            couponInput.name = 'coupon_code';
+                            checkoutForm.appendChild(couponInput);
+                        }
+                        couponInput.value = couponCode;
+                    } else {
+                        couponMessage.textContent = data.message;
+                        couponMessage.className = 'text-sm text-red-500 mt-2';
+                        discountSection.classList.add('hidden');
+                        totalPrice.textContent =
+                            `Rp. ${Math.round(subtotal).toLocaleString('id-ID')}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    couponMessage.textContent = 'An error occurred. Please try again.';
+                    couponMessage.className = 'text-sm text-red-500 mt-2';
+                });
         });
     });
-});
 </script>
-
