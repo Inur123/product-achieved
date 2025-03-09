@@ -240,7 +240,7 @@
                         <!-- Discount -->
                         <div id="discount-section" class="{{ $discount > 0 ? '' : 'hidden' }} flex justify-between">
                             <span class="text-gray-600">Discount</span>
-                            <span id="discount-value" class="font-medium text-green-600">
+                            <span id="discount-value" class="font-medium text-green-500">
                                 Rp. {{ number_format($discount, 0, ',', '.') }}
                             </span>
                         </div>

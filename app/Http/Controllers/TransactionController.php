@@ -12,7 +12,8 @@ use App\Models\Coupon;
 class TransactionController extends Controller
 {
     public function checkout($slug = null)
-    {
+    {  session()->forget('coupon_code');
+        session()->forget('coupon_product_id');
         // Jika slug tidak ada, tampilkan produk di keranjang
         if (!$slug) {
             // Ambil keranjang dari session
@@ -193,114 +194,139 @@ class TransactionController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Validate the input data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:15',
-            'address' => 'required|string',
-            'product_ids' => 'required|array', // Ensure product IDs are provided
-            'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Max 2MB
-            'subtotal' => 'required|numeric', // Pastikan subtotal diterima
-        ]);
+{
+    // Validate the input data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'phone' => 'required|string|max:15',
+        'address' => 'required|string',
+        'product_ids' => 'required|array', // Ensure product IDs are provided
+        'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Max 2MB
+        'subtotal' => 'required|numeric', // Ensure subtotal is received
+    ]);
 
-        // Generate a unique transaction code using Str::random()
-        $transactionCode = 'ACH-' . strtoupper(Str::random(15));
+    // Generate a unique transaction code using Str::random()
+    $transactionCode = 'ACH-' . strtoupper(Str::random(15));
 
-        // Ambil kupon dari session jika ada
-        $couponCode = session()->get('coupon_code');
-        $coupon = null;
-        $discount = 0;
+    // Get coupon from session if exists
+    $couponCode = session()->get('coupon_code');
+    $coupon = null;
+    $discount = 0;
 
-        if ($couponCode) {
-            $coupon = Coupon::where('code', $couponCode)->first();
-            if ($coupon) {
-                // Cek apakah kupon sudah mencapai batas limit
-                if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
-                    return redirect()->back()->with('error', 'Coupon has reached its usage limit.');
-                }
+    if ($couponCode) {
+        // Check if coupon exists and is active
+        $coupon = Coupon::where('code', $couponCode)
+            ->where('status', 'active')
+            ->first();
 
-                // Hitung diskon berdasarkan jenis kupon
-                if ($coupon->discount_type == 'percentage') {
-                    $discount = $request->subtotal * ($coupon->discount_value / 100);
-                } else {
-                    $discount = min($coupon->discount_value, $request->subtotal);
-                }
-
-                // Kurangi kuota kupon jika ada limit
-                if ($coupon->limit !== null) {
-                    $coupon->increment('used'); // Tambahkan 1 ke kolom `used`
-                }
-            }
+        if (!$coupon) {
+            return redirect()->back()->with('error', 'The coupon is no longer valid or has expired.');
         }
 
-        // Handle file upload
-        $filePath = '';
-        if ($request->hasFile('proof_of_payment')) {
-            $file = $request->file('proof_of_payment');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('proofs', $fileName, 'public'); // Simpan file di folder 'storage/app/public/proofs'
+        // Check if coupon has reached its usage limit
+        if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
+            return redirect()->back()->with('error', 'Coupon has reached its usage limit.');
         }
 
-        // Start a new transaction
-        $transaction = Transaction::create([
-            'transaction_code' => $transactionCode, // Assign the generated transaction code
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'status' => 'pending',
-            'total_price' => 0, // Akan diupdate setelah menghitung total harga
-            'proof_of_payment' => $filePath, // Set filepath dari upload file
-            'coupon_id' => $coupon ? $coupon->id : null, // Simpan ID kupon jika ada
-            'discount' => $discount, // Simpan jumlah diskon
-        ]);
-
-        $totalPrice = 0;
-
-        // Attach products to the transaction with promo calculation
+        // Verify that the coupon can be applied to at least one product in the cart
+        $validForAnyProduct = false;
         foreach ($request->product_ids as $productId) {
-            $product = Product::find($productId);
-            if ($product) {
-                // Cek apakah ada promo aktif untuk produk ini
-                $promotion = Promotion::where('product_id', $product->id)
-                    ->where('end_date', '>=', now())
-                    ->first();
+            $validProduct = $coupon->products()
+                ->where('product_id', $productId)
+                ->exists();
 
-                // Hitung harga promo jika ada
-                $productPrice = $product->harga;
-                if ($promotion) {
-                    if ($promotion->discount_type == 'percentage') {
-                        $productPrice = $product->harga * (1 - ($promotion->discount_value / 100));
-                    } else {
-                        $productPrice = max(0, $product->harga - $promotion->discount_value);
-                    }
-                }
-
-                // Simpan transaksi produk dengan harga yang sesuai
-                $transaction->products()->attach($product->id, [
-                    'quantity' => 1, // Anggap jumlahnya 1, bisa diubah sesuai kebutuhan
-                    'price' => $productPrice,
-                ]);
-
-                // Tambahkan harga ke total transaksi
-                $totalPrice += $productPrice;
+            if ($validProduct) {
+                $validForAnyProduct = true;
+                break;
             }
         }
 
-        // Update total price setelah semua produk ditambahkan
-        $transaction->total_price = $totalPrice - $discount; // Kurangi diskon dari total harga
-        $transaction->save();
+        if (!$validForAnyProduct) {
+            return redirect()->back()->with('error', 'This coupon cannot be applied to any of the selected products.');
+        }
 
-        // Clear the cart and coupon from session
-        session()->forget('cart');
-        session()->forget('coupon_code');
+        // Calculate discount based on coupon type
+        if ($coupon->discount_type == 'percentage') {
+            $discount = $request->subtotal * ($coupon->discount_value / 100);
+        } else {
+            $discount = min($coupon->discount_value, $request->subtotal);
+        }
 
-        // Redirect ke halaman pending transaksi
-        return redirect()->route('transaction.pending', ['transaction_code' => $transactionCode])
-            ->with('success', 'Transaction successful!');
+        // Increment coupon usage if it has a limit
+        if ($coupon->limit !== null) {
+            $coupon->increment('used');
+        }
     }
+
+    // Handle file upload
+    $filePath = '';
+    if ($request->hasFile('proof_of_payment')) {
+        $file = $request->file('proof_of_payment');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('proofs', $fileName, 'public'); // Save file in 'storage/app/public/proofs' folder
+    }
+
+    // Start a new transaction
+    $transaction = Transaction::create([
+        'transaction_code' => $transactionCode,
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'address' => $request->address,
+        'status' => 'pending',
+        'total_price' => 0, // Will be updated after calculating total price
+        'proof_of_payment' => $filePath,
+        'coupon_id' => $coupon ? $coupon->id : null,
+        'discount' => $discount,
+    ]);
+
+    $totalPrice = 0;
+
+    // Attach products to the transaction with promo calculation
+    foreach ($request->product_ids as $productId) {
+        $product = Product::find($productId);
+        if ($product) {
+            // Check if there's an active promotion for this product
+            $promotion = Promotion::where('product_id', $product->id)
+                ->where('status', 'active')
+                ->where('end_date', '>=', now())
+                ->first();
+
+            // Calculate promotional price if applicable
+            $productPrice = $product->harga;
+            if ($promotion) {
+                if ($promotion->discount_type == 'percentage') {
+                    $productPrice = $product->harga * (1 - ($promotion->discount_value / 100));
+                } else {
+                    $productPrice = max(0, $product->harga - $promotion->discount_value);
+                }
+            }
+
+            // Save product transaction with appropriate price
+            $transaction->products()->attach($product->id, [
+                'quantity' => 1, // Assume quantity is 1, can be changed as needed
+                'price' => $productPrice,
+            ]);
+
+            // Add price to transaction total
+            $totalPrice += $productPrice;
+        }
+    }
+
+    // Update total price after all products have been added
+    $transaction->total_price = $totalPrice - $discount; // Subtract discount from total price
+    $transaction->save();
+
+    // Clear the cart and coupon from session
+    session()->forget('cart');
+    session()->forget('coupon_code');
+    session()->forget('coupon_product_id');
+
+    // Redirect to transaction pending page
+    return redirect()->route('transaction.pending', ['transaction_code' => $transactionCode])
+        ->with('success', 'Transaction successful!');
+}
     public function pending(Request $request)
     {
         // Retrieve the transaction code from the URL
@@ -365,6 +391,17 @@ class TransactionController extends Controller
         'product_id' => 'required|exists:products,id', // Validate product_id exists
     ]);
 
+    // First check if the coupon exists at all (regardless of status)
+    $couponExists = Coupon::where('code', $request->code)->exists();
+
+    if (!$couponExists) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Coupon code not found.',
+        ]);
+    }
+
+    // Then check if the coupon is active
     $coupon = Coupon::where('code', $request->code)
         ->where('status', 'active')
         ->first();
@@ -372,7 +409,7 @@ class TransactionController extends Controller
     if (!$coupon) {
         return response()->json([
             'success' => false,
-            'message' => 'Invalid coupon code.',
+            'message' => 'Coupon code not found.',
         ]);
     }
 
@@ -396,8 +433,9 @@ class TransactionController extends Controller
         ]);
     }
 
-    // Save coupon code to session
-
+    // Save coupon code to session (optional - depending on your needs)
+    session()->put('coupon_code', $request->code);
+    session()->put('coupon_product_id', $request->product_id);
 
     return response()->json([
         'success' => true,
