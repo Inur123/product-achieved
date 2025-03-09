@@ -22,6 +22,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->decimal('total_price', 10, 2); // Store total price of the transaction
             $table->string('proof_of_payment');
+            $table->decimal('discount', 10, 2)->default(0);
+            $table->unsignedBigInteger('coupon_id')->nullable();
             $table->timestamps();
         });
 

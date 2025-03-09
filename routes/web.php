@@ -45,6 +45,7 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
 
     // Route untuk menghapus produk dari keranjang
     Route::delete('/cart/remove/{slug}', [TransactionController::class, 'removeFromCart'])->name('remove.from.cart');
+    Route::post('/apply-coupon', [TransactionController::class, 'applyCoupon'])->name('apply.coupon');
 });
 
 // Routes for checking a transaction

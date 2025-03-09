@@ -15,12 +15,17 @@ class Coupon extends Model
         'discount_value',
         'status',
         'limit',
-        'code'
+        'code',
+        'used'
     ];
 
     // Relasi many-to-many dengan Product
     public function products()
     {
         return $this->belongsToMany(Product::class, 'coupon_product');
+    }
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

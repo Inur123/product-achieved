@@ -45,11 +45,15 @@
                                         $promoPrice = $product->harga;
                                     @endphp
                                     @foreach ($promotions as $promotion)
-                                        @if ($promotion->product_id == $product->id && $promotion->status == 'active' && $promotion->end_date >= \Carbon\Carbon::now())
+                                        @if (
+                                            $promotion->product_id == $product->id &&
+                                                $promotion->status == 'active' &&
+                                                $promotion->end_date >= \Carbon\Carbon::now())
                                             @php
                                                 $isPromoActive = true;
                                                 if ($promotion->discount_type == 'percentage') {
-                                                    $promoPrice = $product->harga * (1 - $promotion->discount_value / 100);
+                                                    $promoPrice =
+                                                        $product->harga * (1 - $promotion->discount_value / 100);
                                                 } else {
                                                     $promoPrice = $product->harga - $promotion->discount_value;
                                                 }
@@ -90,7 +94,8 @@
                                 <h3 class="font-semibold">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm">
                                     {{ Str::limit($product->description ?? 'No description available.', 50, '...') }}</p>
-                                <div class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
+                                <div
+                                    class="inline-block px-2 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded mt-2">
                                     {{ $product->category->name }} <!-- Display category name -->
                                 </div>
                             </div>
@@ -102,11 +107,15 @@
                                             $promoPrice = $originalPrice;
                                         @endphp
                                         @foreach ($promotions as $promotion)
-                                            @if ($promotion->product_id == $product->id && $promotion->status == 'active' && $promotion->end_date >= \Carbon\Carbon::now())
+                                            @if (
+                                                $promotion->product_id == $product->id &&
+                                                    $promotion->status == 'active' &&
+                                                    $promotion->end_date >= \Carbon\Carbon::now())
                                                 @php
                                                     $isPromoActive = true;
                                                     if ($promotion->discount_type == 'percentage') {
-                                                        $promoPrice = $originalPrice * (1 - $promotion->discount_value / 100);
+                                                        $promoPrice =
+                                                            $originalPrice * (1 - $promotion->discount_value / 100);
                                                     } else {
                                                         $promoPrice = $originalPrice - $promotion->discount_value;
                                                     }
@@ -159,10 +168,10 @@
             @if ($product || (isset($products) && is_array($products) && count($products) > 0))
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-bold mb-6">Customer Information</h2>
-                    <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form"
-                        enctype="multipart/form-data">
+                    <form action="{{ route('transaction.complete.purchase') }}" method="POST" id="checkout-form" enctype="multipart/form-data">
                         @csrf
                         <div class="space-y-4">
+                            <!-- Input fields untuk customer information -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -189,8 +198,7 @@
                                     <input type="file" name="proof_of_payment"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                                         required>
-                                    <p class="text-sm text-gray-500 mt-1">Upload your payment proof (JPG, PNG, or PDF, max
-                                        2MB).</p>
+                                    <p class="text-sm text-gray-500 mt-1">Upload your payment proof (JPG, PNG, or PDF, max 2MB).</p>
                                 </div>
                             </div>
 
@@ -201,7 +209,7 @@
                                     required></textarea>
                             </div>
 
-                            <!-- Hidden input for product IDs -->
+                            <!-- Hidden input untuk product IDs dan subtotal -->
                             @if (isset($products) && is_array($products) && count($products) > 0)
                                 @foreach ($products as $item)
                                     <input type="hidden" name="product_ids[]" value="{{ $item['product']->id }}">
@@ -209,6 +217,7 @@
                             @elseif (isset($product))
                                 <input type="hidden" name="product_ids[]" value="{{ $product->id }}">
                             @endif
+                            <input type="hidden" name="subtotal" value="{{ $subtotal }}">
                         </div>
                     </form>
                 </div>
@@ -228,23 +237,32 @@
                             <span class="font-medium">Rp. {{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
 
+                        <!-- Discount -->
+                        <div id="discount-section" class="{{ $discount > 0 ? '' : 'hidden' }} flex justify-between">
+                            <span class="text-gray-600">Discount</span>
+                            <span id="discount-value" class="font-medium text-green-600">
+                                Rp. {{ number_format($discount, 0, ',', '.') }}
+                            </span>
+                        </div>
+
                         <!-- Total -->
                         <div class="border-t pt-4">
                             <div class="flex justify-between">
                                 <span class="font-bold">Total</span>
-                                <span class="font-bold text-primary">Rp. {{ number_format($total, 0, ',', '.') }}</span>
+                                <span id="total-price" class="font-bold text-primary">Rp. {{ number_format($total, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Coupon Code</label>
                         <div class="flex space-x-2">
-                            <input type="text" placeholder="Enter coupon code"
+                            <input type="text" id="coupon-code" placeholder="Enter coupon code"
                                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                            <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium">
+                            <button id="apply-coupon" class="bg-primary text-white px-4 py-2 rounded-lg font-medium">
                                 Apply
                             </button>
                         </div>
+                        <p id="coupon-message" class="text-sm text-red-500 mt-2"></p>
                     </div>
                     <!-- Tombol "Complete Purchase" -->
                     <button type="submit" form="checkout-form"
@@ -301,3 +319,57 @@
         }
     });
 </script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    const applyCouponButton = document.getElementById('apply-coupon');
+    const couponCodeInput = document.getElementById('coupon-code');
+    const couponMessage = document.getElementById('coupon-message');
+    const discountSection = document.getElementById('discount-section');
+    const discountValue = document.getElementById('discount-value');
+    const totalPrice = document.getElementById('total-price');
+    const subtotal = {{ $subtotal }}; // Subtotal dari backend
+
+    applyCouponButton.addEventListener('click', function() {
+        const couponCode = couponCodeInput.value;
+
+        fetch('{{ route("transaction.apply.coupon") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ code: couponCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                couponMessage.textContent = '';
+                discountSection.classList.remove('hidden');
+
+                let discountAmount = 0;
+                if (data.discount_type === 'percentage') {
+                    discountAmount = subtotal * (data.discount / 100);
+                } else {
+                    discountAmount = data.discount;
+                }
+
+                // Round the discount amount to avoid decimal places
+                discountAmount = Math.round(discountAmount);
+
+                // Format the discount and total price without decimals using toLocaleString
+                discountValue.textContent = `Rp. ${discountAmount.toLocaleString('id-ID')}`;
+                totalPrice.textContent = `Rp. ${(Math.round(subtotal - discountAmount)).toLocaleString('id-ID')}`;
+            } else {
+                couponMessage.textContent = data.message;
+                discountSection.classList.add('hidden');
+                totalPrice.textContent = `Rp. ${Math.round(subtotal).toLocaleString('id-ID')}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+</script>
+

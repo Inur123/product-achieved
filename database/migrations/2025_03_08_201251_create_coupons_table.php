@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('discount_value', 10, 2);
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->integer('limit')->nullable(); // Null jika unlimited
+            $table->integer('used')->default(0);
             $table->timestamps();
         });
 

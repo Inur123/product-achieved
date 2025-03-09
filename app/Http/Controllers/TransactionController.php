@@ -7,10 +7,10 @@ use App\Models\Promotion;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\Coupon;
 
 class TransactionController extends Controller
 {
-
     public function checkout($slug = null)
     {
         // Jika slug tidak ada, tampilkan produk di keranjang
@@ -28,6 +28,7 @@ class TransactionController extends Controller
                     'tax' => 0,
                     'total' => 0,
                     'cart' => $cart, // Kirim data keranjang ke view
+                    'discount' => 0, // Tidak ada diskon
                 ]);
             }
 
@@ -69,9 +70,24 @@ class TransactionController extends Controller
                 }
             }
 
-            // Hitung total
+            // Ambil kupon jika ada
+            $discount = 0;
+            $couponCode = session()->get('coupon_code');
+            $coupon = null;
+            if ($couponCode) {
+                $coupon = Coupon::where('code', $couponCode)->first();
+                if ($coupon) {
+                    if ($coupon->discount_type == 'percentage') {
+                        $discount = $subtotal * ($coupon->discount_value / 100);
+                    } else {
+                        $discount = min($coupon->discount_value, $subtotal); // Hindari diskon lebih besar dari subtotal
+                    }
+                }
+            }
+
+            // Hitung total setelah diskon
             $tax = 0; // Pajak (jika ada)
-            $total = $subtotal + $tax;
+            $total = $subtotal - $discount + $tax;
 
             return view('frontend.transactions.checkout', [
                 'product' => null, // Tidak ada produk tunggal
@@ -81,6 +97,8 @@ class TransactionController extends Controller
                 'tax' => $tax,
                 'total' => $total,
                 'cart' => $cart, // Kirim data keranjang ke view
+                'discount' => $discount, // Kirim diskon ke view
+                'coupon' => $coupon, // Kirim data kupon ke view
             ]);
         }
 
@@ -110,16 +128,30 @@ class TransactionController extends Controller
         // Hitung subtotal
         $subtotal = $promoPrice;
 
+        // Ambil kupon jika ada
+        $discount = 0;
+        $couponCode = session()->get('coupon_code');
+        $coupon = null;
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)->first();
+            if ($coupon) {
+                if ($coupon->discount_type == 'percentage') {
+                    $discount = $subtotal * ($coupon->discount_value / 100);
+                } else {
+                    $discount = min($coupon->discount_value, $subtotal);
+                }
+            }
+        }
+
         // Pajak (jika ada), default ke 0
         $tax = 0;
 
-        // Hitung total harga
-        $total = $subtotal + $tax;
+        // Hitung total harga setelah diskon
+        $total = $subtotal - $discount + $tax;
 
         // Kirim data ke tampilan checkout
-        return view('frontend.transactions.checkout', compact('product', 'promotions', 'subtotal', 'tax', 'total'));
+        return view('frontend.transactions.checkout', compact('product', 'promotions', 'subtotal', 'tax', 'total', 'discount', 'coupon'));
     }
-
 
     public function addToCart(Request $request, $slug)
     {
@@ -147,6 +179,7 @@ class TransactionController extends Controller
 
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
+
     public function removeFromCart($slug)
     {
         $cart = session()->get('cart', []);
@@ -169,10 +202,46 @@ class TransactionController extends Controller
             'address' => 'required|string',
             'product_ids' => 'required|array', // Ensure product IDs are provided
             'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Max 2MB
+            'subtotal' => 'required|numeric', // Pastikan subtotal diterima
         ]);
 
         // Generate a unique transaction code using Str::random()
         $transactionCode = 'ACH-' . strtoupper(Str::random(15));
+
+        // Ambil kupon dari session jika ada
+        $couponCode = session()->get('coupon_code');
+        $coupon = null;
+        $discount = 0;
+
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)->first();
+            if ($coupon) {
+                // Cek apakah kupon sudah mencapai batas limit
+                if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
+                    return redirect()->back()->with('error', 'Coupon has reached its usage limit.');
+                }
+
+                // Hitung diskon berdasarkan jenis kupon
+                if ($coupon->discount_type == 'percentage') {
+                    $discount = $request->subtotal * ($coupon->discount_value / 100);
+                } else {
+                    $discount = min($coupon->discount_value, $request->subtotal);
+                }
+
+                // Kurangi kuota kupon jika ada limit
+                if ($coupon->limit !== null) {
+                    $coupon->increment('used'); // Tambahkan 1 ke kolom `used`
+                }
+            }
+        }
+
+        // Handle file upload
+        $filePath = '';
+        if ($request->hasFile('proof_of_payment')) {
+            $file = $request->file('proof_of_payment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('proofs', $fileName, 'public'); // Simpan file di folder 'storage/app/public/proofs'
+        }
 
         // Start a new transaction
         $transaction = Transaction::create([
@@ -182,69 +251,56 @@ class TransactionController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'status' => 'pending',
-            'total_price' => 0, // Will be updated after calculating total price
-            'proof_of_payment' => '', // Will be updated after uploading the file
+            'total_price' => 0, // Akan diupdate setelah menghitung total harga
+            'proof_of_payment' => $filePath, // Set filepath dari upload file
+            'coupon_id' => $coupon ? $coupon->id : null, // Simpan ID kupon jika ada
+            'discount' => $discount, // Simpan jumlah diskon
         ]);
 
         $totalPrice = 0;
-
-        // Handle file upload
-        if ($request->hasFile('proof_of_payment')) {
-            $file = $request->file('proof_of_payment');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('proofs', $fileName, 'public'); // Store file in 'storage/app/public/proofs'
-            $transaction->proof_of_payment = $filePath;
-        }
 
         // Attach products to the transaction with promo calculation
         foreach ($request->product_ids as $productId) {
             $product = Product::find($productId);
             if ($product) {
-                // Get active promotions for the product
-                $promotions = Promotion::where('product_id', $product->id)
-                    ->where('status', 'active') // Only active promotions
-                    ->where('end_date', '>=', now()) // Ensure promotion is still valid
-                    ->get();
+                // Cek apakah ada promo aktif untuk produk ini
+                $promotion = Promotion::where('product_id', $product->id)
+                    ->where('end_date', '>=', now())
+                    ->first();
 
-                // Default product price
+                // Hitung harga promo jika ada
                 $productPrice = $product->harga;
-
-                // Calculate promotion price if there's an active promotion
-                foreach ($promotions as $promotion) {
+                if ($promotion) {
                     if ($promotion->discount_type == 'percentage') {
                         $productPrice = $product->harga * (1 - ($promotion->discount_value / 100));
                     } else {
                         $productPrice = max(0, $product->harga - $promotion->discount_value);
                     }
-                    break; // Use the first valid promotion found
                 }
 
-                // Attach the product to the transaction
+                // Simpan transaksi produk dengan harga yang sesuai
                 $transaction->products()->attach($product->id, [
-                    'quantity' => 1, // Assume quantity is 1 (could be adjusted)
-                    'price' => $productPrice, // Attach the final calculated price (with or without promotion)
+                    'quantity' => 1, // Anggap jumlahnya 1, bisa diubah sesuai kebutuhan
+                    'price' => $productPrice,
                 ]);
 
-                // Add to the total price
+                // Tambahkan harga ke total transaksi
                 $totalPrice += $productPrice;
             }
         }
 
-        // Update the total price of the transaction after calculating the price of all products
-        $transaction->total_price = $totalPrice;
+        // Update total price setelah semua produk ditambahkan
+        $transaction->total_price = $totalPrice - $discount; // Kurangi diskon dari total harga
         $transaction->save();
 
-        // Clear the cart from session
+        // Clear the cart and coupon from session
         session()->forget('cart');
+        session()->forget('coupon_code');
 
-        // Redirect to the pending transaction page
+        // Redirect ke halaman pending transaksi
         return redirect()->route('transaction.pending', ['transaction_code' => $transactionCode])
             ->with('success', 'Transaction successful!');
     }
-
-
-
-    // Tampilan halaman sukses setelah transaksi berhasil
     public function pending(Request $request)
     {
         // Retrieve the transaction code from the URL
@@ -269,6 +325,7 @@ class TransactionController extends Controller
     {
         return view('frontend.transactions.cek-transactions');
     }
+
     public function cekTransaction(Request $request)
     {
         // Validate the input with a custom error message
@@ -299,5 +356,40 @@ class TransactionController extends Controller
 
         // Redirect kembali ke halaman checkout dengan pesan sukses
         return redirect()->route('transaction.checkout')->with('success', 'Product removed from cart.');
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $coupon = Coupon::where('code', $request->code)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid coupon code.',
+            ]);
+        }
+
+        // Cek apakah kupon sudah mencapai batas limit
+        if ($coupon->limit !== null && $coupon->used >= $coupon->limit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Coupon has reached its usage limit.',
+            ]);
+        }
+
+        // Simpan kode kupon ke session
+
+
+        return response()->json([
+            'success' => true,
+            'discount' => $coupon->discount_value,
+            'discount_type' => $coupon->discount_type,
+        ]);
     }
 }

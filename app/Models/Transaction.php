@@ -9,15 +9,31 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    // Kolom yang dapat diisi (fillable)
     protected $fillable = [
-        'name', 'email', 'phone', 'address', 'status', 'total_price', 'transaction_code', 'proof_of_payment'
+        'name',
+        'email',
+        'phone',
+        'address',
+        'status',
+        'total_price',
+        'transaction_code',
+        'proof_of_payment',
+        'discount', // Pastikan discount ada di fillable
+        'coupon_id', // Pastikan coupon_id ada di fillable
     ];
 
-    // Define many-to-many relationship with products
+    // Relasi many-to-many dengan model Product
     public function products()
     {
         return $this->belongsToMany(Product::class)
-                    ->withPivot('quantity', 'price') // Include additional columns from pivot table
+                    ->withPivot('quantity', 'price') // Sertakan kolom tambahan dari tabel pivot
                     ->withTimestamps();
+    }
+
+    // Relasi many-to-one dengan model Coupon
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
     }
 }
