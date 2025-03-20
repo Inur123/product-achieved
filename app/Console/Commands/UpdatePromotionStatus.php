@@ -27,17 +27,17 @@ class UpdatePromotionStatus extends Command
      */
     public function handle()
     {
-        $now = Carbon::now();
+        // $now = Carbon::now();
 
-        // Update status untuk promosi yang aktif
-        Promotion::where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->update(['status' => 'active']);
+        // // Update status untuk promosi yang aktif
+        // Promotion::where('start_date', '<=', $now)
+        //     ->where('end_date', '>=', $now)
+        //     ->update(['status' => 'active']);
 
-        // Update status untuk promosi yang sudah kadaluarsa
-        Promotion::where('end_date', '<', $now)
-            ->update(['status' => 'expired']);
+        // // Update status untuk promosi yang sudah kadaluarsa
+        // Promotion::where('end_date', '<', $now)
+        //     ->update(['status' => 'expired']);
 
-        $this->info('Promotion statuses updated successfully.');
+        // $this->info('Promotion statuses updated successfully.');
     }
 }
