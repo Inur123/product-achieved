@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Mail\ApprovedTransaction;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class AdminTransactionController extends Controller
@@ -91,81 +93,37 @@ class AdminTransactionController extends Controller
 
         return view('backend.transactions.detail', compact('transaction'));
     }
+
     public function approveTransaction($transactionCode)
-{
-    // Find the transaction by its code
-    $transaction = Transaction::where('transaction_code', $transactionCode)->first();
+    {
+        // Find the transaction by its code
+        $transaction = Transaction::where('transaction_code', $transactionCode)->first();
 
-    if ($transaction) {
-        // Change the status to 'completed' when approved
-        $transaction->status = 'completed';
-        $transaction->save();
+        if ($transaction) {
+            // Change the status to 'completed' when approved
+            $transaction->status = 'completed';
+            $transaction->save();
 
-        // Return a success response
-        return response()->json(['success' => true, 'message' => 'Transaction successfully approved.']);
+            // Kirim email notifikasi
+            Mail::to($transaction->email)->send(new ApprovedTransaction($transaction));
+            // Return a success response
+            return response()->json(['success' => true, 'message' => 'Transaction successfully approved.']);
+        }
+
+        // Return a failure response if transaction is not found
+        return response()->json(['success' => false, 'message' => 'Transaction not found.']);
     }
 
-    // Return a failure response if transaction is not found
-    return response()->json(['success' => false, 'message' => 'Transaction not found.']);
-}
 
+    public function destroy($transactionCode)
+    {
+        $transaction = Transaction::where('transaction_code', $transactionCode)->first();
 
+        if ($transaction) {
+            $transaction->delete();
+            return response()->json(['success' => true, 'message' => 'Transaction deleted successfully.']);
+        }
 
-
-
-public function destroy($transactionCode)
-{
-    $transaction = Transaction::where('transaction_code', $transactionCode)->first();
-
-    if ($transaction) {
-        $transaction->delete();
-        return response()->json(['success' => true, 'message' => 'Transaction deleted successfully.']);
+        return response()->json(['success' => false, 'message' => 'Transaction not found.']);
     }
-
-    return response()->json(['success' => false, 'message' => 'Transaction not found.']);
-}
-
-
-
-
-
-
-
-
-    // // Update the status of a specific transaction
-    // public function updateStatus(Request $request, $transactionCode)
-    // {
-    //     $request->validate([
-    //         'status' => 'required|string|in:pending,completed,cancelled',
-    //     ]);
-
-    //     $transaction = Transaction::where('transaction_code', $transactionCode)->first();
-
-    //     if (!$transaction) {
-    //         return redirect()->route('admin.transactions.index')->with('error', 'Transaction not found');
-    //     }
-
-    //     $transaction->status = $request->status;
-    //     $transaction->save();
-
-    //     return redirect()->route('admin.transactions.index')->with('success', 'Transaction status updated successfully');
-    // }
-
-    // // Delete a transaction
-    // public function destroy($transactionCode)
-    // {
-    //     $transaction = Transaction::where('transaction_code', $transactionCode)->first();
-
-    //     if (!$transaction) {
-    //         return redirect()->route('admin.transactions.index')->with('error', 'Transaction not found');
-    //     }
-
-    //     // Optionally delete associated product entries in pivot table
-    //     $transaction->products()->detach();
-
-    //     // Delete the transaction
-    //     $transaction->delete();
-
-    //     return redirect()->route('admin.transactions.index')->with('success', 'Transaction deleted successfully');
-    // }
 }
