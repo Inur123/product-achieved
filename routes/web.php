@@ -16,6 +16,8 @@ use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\AdminTransactionController;
 
 
+
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 //detail product
 Route::get('/product/{slug}', [ItemDetailController::class, 'index'])->name('item-detail');
