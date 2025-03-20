@@ -8,6 +8,8 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Coupon;
+use App\Mail\TransactionConfirmation;
+use Illuminate\Support\Facades\Mail;
 
 class TransactionController extends Controller
 {
@@ -317,6 +319,9 @@ class TransactionController extends Controller
     // Update total price after all products have been added
     $transaction->total_price = $totalPrice - $discount; // Subtract discount from total price
     $transaction->save();
+
+    // Kirim email konfirmasi
+    Mail::to($transaction->email)->send(new TransactionConfirmation($transaction));
 
     // Clear the cart and coupon from session
     session()->forget('cart');
