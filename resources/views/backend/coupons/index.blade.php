@@ -22,7 +22,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Active Coupons</p>
-                        <p class="text-3xl font-bold text-gray-800">12</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $activeCouponsCount }}</p>
                     </div>
                     <div class="p-3 rounded-full bg-green-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none"
@@ -39,7 +39,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Expired Coupons</p>
-                        <p class="text-3xl font-bold text-gray-800">8</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $inactiveCouponsCount }}</p>
                     </div>
                     <div class="p-3 rounded-full bg-red-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none"
@@ -56,7 +56,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Total Redemptions</p>
-                        <p class="text-3xl font-bold text-gray-800">1,245</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $totalUsedCoupons }}</p>
                     </div>
                     <div class="p-3 rounded-full bg-primary bg-opacity-10">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"

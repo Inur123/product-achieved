@@ -86,8 +86,8 @@
                             <td class="px-4 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('/placeholder.svg?height=40&width=32') }}"
-                                    alt="Book Cover"
-                                    class="h-10 w-8 object-cover mr-3 rounded-lg">
+                                        alt="Book Cover"
+                                        class="h-10 w-8 object-cover mr-3 rounded-lg">
 
                                     <div>
                                         <p class="text-sm font-medium text-gray-800">{{ $product->name }}</p>
@@ -96,7 +96,27 @@
                                 </div>
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ $product->category->name ?? '-' }}</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-right">Rp. {{ number_format($product->pivot->price, 2) }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-right">
+                                @if ($product->promotions)
+                                    <span class="text-gray-500 text-sm line-through">Rp
+                                        {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                    <span class="text-primary font-bold">
+                                        Rp
+                                        {{ number_format(
+                                            $product->promotions->discount_type == 'percentage'
+                                                ? $product->harga * (1 - $product->promotions->discount_value / 100)
+                                                : max(0, $product->harga - $product->promotions->discount_value),
+                                            0,
+                                            ',',
+                                            '.',
+                                        ) }}
+                                    </span>
+                                @else
+                                    <span class="text-primary font-bold">Rp
+                                        {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                @endif
+                            </td>
+
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-right">{{ $product->pivot->quantity }}</td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-right">Rp. {{ number_format($product->pivot->price * $product->pivot->quantity, 2) }}</td>
                         </tr>
@@ -105,7 +125,29 @@
                     <tfoot>
                         <tr class="border-t border-gray-100">
                             <td colspan="4" class="px-4 py-3 text-right text-sm font-medium text-gray-600">Subtotal:</td>
-                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-800">Rp. {{ number_format($transaction->products->sum(fn($p) => $p->pivot->price * $p->pivot->quantity), 2) }}</td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-gray-800">
+                                Rp. {{ number_format($transaction->products->sum(fn($p) => $p->pivot->price * $p->pivot->quantity), 2) }}
+                            </td>
+                        </tr>
+
+                        @if($transaction->coupon)
+                        <tr class="border-t border-gray-100">
+                            <td colspan="4" class="px-4 py-3 text-right text-sm font-medium text-green-600">
+                                Coupon Discount ({{ $transaction->coupon->code ?? '-' }}):
+                            </td>
+                            <td class="px-4 py-3 text-right text-sm font-medium text-green-600">
+                                -Rp. {{ number_format($transaction->coupon->discount_value ?? 0, 2, ',', '.') }}
+                            </td>
+                        </tr>
+                        @endif
+
+
+
+                        <tr class="border-t border-gray-100">
+                            <td colspan="4" class="px-4 py-3 text-right text-sm font-bold text-gray-800">Total:</td>
+                            <td class="px-4 py-3 text-right text-sm font-bold text-gray-900">
+                                Rp{{ number_format($transaction->total_price, 2, ',', '.') }}
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

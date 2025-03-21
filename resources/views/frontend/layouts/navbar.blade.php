@@ -10,10 +10,10 @@
                 @php $isHome = Request::is('/'); @endphp
 
                 <a href="{{ $isHome ? '#hero' : url('/') . '#hero' }}" class="text-dark hover:text-primary font-semibold">Home</a>
-                <a href="{{ $isHome ? '#promo' : url('/') . '#promo' }}" class="text-dark hover:text-primary font-semibold">Promo</a>
-                <a href="{{ $isHome ? '#categories' : url('/') . '#categories' }}" class="text-dark hover:text-primary font-semibold">Categories</a>
-                <a href="{{ $isHome ? '#products' : url('/') . '#products' }}" class="text-dark hover:text-primary font-semibold">Books</a>
                 <a href="{{ $isHome ? '#about' : url('/') . '#about' }}" class="text-dark hover:text-primary font-semibold">About Us</a>
+                <a href="{{ $isHome ? '#products' : url('/') . '#products' }}" class="text-dark hover:text-primary font-semibold">Books</a>
+                <a href="{{ $isHome ? '#categories' : url('/') . '#categories' }}" class="text-dark hover:text-primary font-semibold">Categories</a>
+                <a href="{{ $isHome ? '#promo' : url('/') . '#promo' }}" class="text-dark hover:text-primary font-semibold">Promo</a>
                 <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold">Cek Transaksi</a>
             </nav>
             <div class="flex items-center space-x-4">
@@ -58,10 +58,10 @@
     </div>
     <nav class="md:hidden flex flex-col space-y-4">
         <a href="{{ url('/') }}#hero" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Home</a>
-        <a href="{{ url('/') }}#promo" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Promo</a>
-        <a href="{{ url('/') }}#categories" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Categories</a>
-        <a href="{{ url('/') }}#products" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Books</a>
         <a href="{{ url('/') }}#about" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">About Us</a>
+        <a href="{{ url('/') }}#products" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Books</a>
+        <a href="{{ url('/') }}#categories" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Categories</a>
+        <a href="{{ url('/') }}#promo" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Promo</a>
         <a href="{{ route('transactions.cek') }}" class="text-dark hover:text-primary font-semibold text-xl py-2 border-b border-gray-100">Cek Transaksi</a>
     </nav>
     <div class="mt-auto">

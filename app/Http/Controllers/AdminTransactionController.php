@@ -85,7 +85,9 @@ class AdminTransactionController extends Controller
     // Show the details of a specific transaction
     public function show($transactionCode)
     {
-        $transaction = Transaction::where('transaction_code', $transactionCode)->first();
+        $transaction = Transaction::where('transaction_code', $transactionCode)
+            ->with(['products', 'coupon']) // Memuat relasi products dan coupon
+            ->first();
 
         if (!$transaction) {
             return redirect()->route('transactions.index')->with('error', 'Transaction not found');
@@ -93,6 +95,7 @@ class AdminTransactionController extends Controller
 
         return view('backend.transactions.detail', compact('transaction'));
     }
+
 
     public function approveTransaction($transactionCode)
     {

@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KiddiBooks - Admin Login</title>
+    <title>Achieved.id - Admin Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('logo-2.png') }}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -81,15 +82,6 @@
                 @enderror
             </div>
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember" name="remember"
-                        class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                    <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
-                </div>
-                <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
-            </div>
-
             <button type="submit"
                 class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition">
                 Sign In
@@ -97,8 +89,8 @@
         </form>
 
         <div class="mt-6 text-center text-sm text-gray-600">
-            <p>Need help? Contact <a href="mailto:support@kiddibooks.com"
-                    class="text-primary hover:underline">support@kiddibooks.com</a></p>
+            <p>Need help? Contact <a href="mailto:achieved.id@gmail.com"
+                    class="text-primary hover:underline">achieved.id@gmail.com</a></p>
         </div>
     </div>
 

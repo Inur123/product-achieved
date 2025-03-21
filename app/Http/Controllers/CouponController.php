@@ -15,8 +15,16 @@ class CouponController extends Controller
     {
         $coupons = Coupon::with('products')->paginate(10); // Eager load products
         $products = Product::all(); // Ambil semua produk
-        return view('backend.coupons.index', compact('coupons', 'products'));
+        $activeCouponsCount = Coupon::where('status', 'active')->count(); // Hitung total kupon aktif
+        $inactiveCouponsCount = Coupon::where('status', 'inactive')->count(); // Hitung total kupon inactive
+        $totalUsedCoupons = Coupon::sum('used'); // Hitung total penggunaan semua kupon
+
+        return view('backend.coupons.index', compact('coupons', 'products', 'activeCouponsCount', 'inactiveCouponsCount', 'totalUsedCoupons'));
     }
+
+
+
+
 
     public function store(Request $request)
     {

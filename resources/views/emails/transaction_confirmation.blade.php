@@ -152,6 +152,20 @@
             background: #1e40af;
         }
 
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
         /* Responsive Styles */
         @media (max-width: 480px) {
             .header {
@@ -183,7 +197,7 @@
             }
 
             .order-items th {
-                display: none; /* Sembunyikan header di layar kecil */
+                display: none;
             }
 
             .order-items td {
@@ -258,18 +272,56 @@
                 </thead>
                 <tbody>
                     @foreach ($transaction->products as $product)
+                        @php
+                            $originalPrice = $product->harga;
+                            $discountedPrice = $originalPrice;
+
+                            if ($product->promotions) {
+                                if ($product->promotions->discount_type == 'percentage') {
+                                    $discountedPrice =
+                                        $originalPrice * (1 - $product->promotions->discount_value / 100);
+                                } else {
+                                    $discountedPrice = max(0, $originalPrice - $product->promotions->discount_value);
+                                }
+                            }
+
+                            $subtotal = $discountedPrice * $product->pivot->quantity;
+                        @endphp
                         <tr>
                             <td data-label="Produk">{{ $product->name }}</td>
-                            <td data-label="Harga Satuan">Rp {{ number_format($product->pivot->price, 0, ',', '.') }}</td>
-                            <td data-label="Jumlah">{{ $product->pivot->quantity }}</td>
-                            <td data-label="Total">Rp {{ number_format($product->pivot->price * $product->pivot->quantity, 0, ',', '.') }}</td>
+                            <td data-label="Harga Satuan" class="text-right">
+                                @if ($product->promotions)
+                                    <span class="original-price" style="text-decoration: line-through; color: #6b7280; font-size: 0.9em;">
+                                        Rp {{ number_format($originalPrice, 0, ',', '.') }}
+                                    </span>
+                                    <span class="discounted-price" style="color: #2563eb; font-weight: bold; display: block;">
+                                        Rp {{ number_format($discountedPrice, 0, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span class="discounted-price" style="color: #2563eb; font-weight: bold;">
+                                        Rp {{ number_format($originalPrice, 0, ',', '.') }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td data-label="Jumlah" class="text-center">{{ $product->pivot->quantity }}</td>
+                            <td data-label="Total" class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
+                <tfoot class="">
+                    @if ($transaction->discount > 0)
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Diskon:</td>
+                            <td style="text-align: right; font-weight: bold;">
+                                Rp {{ number_format($transaction->discount, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @endif
                     <tr>
                         <td colspan="3" style="text-align: right; font-weight: bold;">Total Harga:</td>
-                        <td style="font-weight: bold;">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</td>
+                        <td style="text-align: right; font-weight: bold;">
+                            Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
@@ -282,15 +334,15 @@
             <div class="next-steps">
                 <p style="font-weight: bold; color: #2563eb;">Langkah Selanjutnya:</p>
                 <ul>
-                    <li>Kami akan memproses pesanan Anda segera</li>
-                    <li>Anda akan menerima email pembaruan status</li>
-                    <li>Perkiraan pengiriman dalam 2-3 hari kerja</li>
+                    <li>Kami akan memproses pesanan Anda segera.</li>
+                    <li>Anda akan menerima email pembaruan status.</li>
+                    <li>Perkiraan pengiriman dalam 2-3 hari kerja.</li>
                 </ul>
             </div>
         </div>
         <div class="contact">
             <p style="color: #6b7280;">Jika Anda memiliki pertanyaan, silakan hubungi kami:</p>
-            <a href="mailto:support@example.com">📧 support@example.com</a>
+            <a href="mailto:achieved.id@gmail.com">📧 achieved.id@gmail.com</a>
             <a href="tel:+6281234567890">📞 +62 812-3456-7890</a>
         </div>
         <div class="footer">&copy; 2025 Achieved.id. Semua hak dilindungi.</div>

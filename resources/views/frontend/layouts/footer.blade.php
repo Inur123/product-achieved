@@ -66,21 +66,26 @@
             <div>
                 <h3 class="text-lg font-bold mb-4">Quick Links</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-200 hover:text-white">Home</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">About Us</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">Categories</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">Featured Books</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">Contact</a></li>
+                    @php $isHome = Request::is('/'); @endphp
+
+                    <li><a href="{{ $isHome ? '#hero' : url('/') . '#hero' }}" class="text-gray-200 hover:text-white">Home</a></li>
+                    <li><a href="{{ $isHome ? '#about' : url('/') . '#about' }}" class="text-gray-200 hover:text-white">About Us</a></li>
+                    <li><a href="{{ $isHome ? '#promo' : url('/') . '#promo' }}" class="text-gray-200 hover:text-white">Promo</a></li>
+                    <li><a href="{{ $isHome ? '#categories' : url('/') . '#categories' }}" class="text-gray-200 hover:text-white">Categories</a></li>
+                    <li><a href="{{ $isHome ? '#products' : url('/') . '#products' }}" class="text-gray-200 hover:text-white">Books</a></li>
+                    <li><a href="{{ route('transactions.cek') }}" class="text-gray-200 hover:text-white">Cek Transaksi</a></li>
                 </ul>
             </div>
             <div>
                 <h3 class="text-lg font-bold mb-4">Categories</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-200 hover:text-white">IELTS</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">STEAM Kids</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">Promotions</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">TOEFL</a></li>
-                    <li><a href="#" class="text-gray-200 hover:text-white">All Books</a></li>
+                    @foreach ($categories as $category)
+                        <li>
+                            <a href="#" class="text-gray-200 hover:text-white">
+                                {{ $category->name }}
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
             <div>
