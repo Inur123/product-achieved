@@ -13,7 +13,7 @@
                     <div class="mb-4">
                         <label for="transaction-id" class="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Kode Transaksi</label>
                         <input type="text" id="transaction-id" name="transaction_id" placeholder="Isi kode transaksi  (e.g., ACH-2025...)"
-                            class="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm md:text-base">
+                            class="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm md:text-base" required>
                         @error('transaction_id')
                             <span class="text-red-500 text-xs md:text-sm">{{ $message }}</span>
                         @enderror

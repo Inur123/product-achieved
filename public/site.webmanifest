@@ -1,0 +1,21 @@
+{
+    "name": "Achieved.id",
+    "short_name": "Achieved",
+    "description": "Educational technology platform for STEM and language learning.",
+    "icons": [
+      {
+        "src": "/logo-2.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/logo-2.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4a90e2"
+  }
