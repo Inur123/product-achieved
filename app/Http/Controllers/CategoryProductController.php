@@ -12,10 +12,11 @@ class CategoryProductController extends Controller
         // Ambil kategori berdasarkan slug
         $category = Category::where('slug', $slug)->firstOrFail();
 
-        // Ambil produk yang hanya termasuk dalam kategori tersebut
-        $products = $category->products()->paginate(12);
+        // Ambil produk yang hanya termasuk dalam kategori tersebut dan statusnya active
+        $products = $category->products()
+                            ->where('status', 'active')
+                            ->paginate(12);
 
         return view('category-products', compact('category', 'products'));
     }
-
 }
