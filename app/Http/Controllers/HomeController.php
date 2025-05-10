@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Promotion;
+use App\Models\ClassModel;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -28,7 +29,9 @@ class HomeController extends Controller
         ->with('product') // Pastikan ada relasi di model
         ->get();
 
-    return view('home', compact('categories', 'products', 'promotions'));
+    $classes = ClassModel::where('status', 'active')->paginate(10);
+
+    return view('home', compact('categories', 'products', 'promotions', 'classes'));
 }
 
 }

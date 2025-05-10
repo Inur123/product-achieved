@@ -71,7 +71,7 @@
             <li>
                 <a href="{{ route('coupons.index') }}"
                     class="flex items-center space-x-3 px-3 py-2 rounded-lg
-          {{ request()->routeIs('coupons.*') ? 'bg-primary bg-opacity-20 text-primary' : 'hover:bg-gray-700 text-gray-300 hover:text-white' }}">
+                    {{ request()->routeIs('coupons.*') ? 'bg-primary bg-opacity-20 text-primary' : 'hover:bg-gray-700 text-gray-300 hover:text-white' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,8 +79,22 @@
                     </svg>
                     <span>Coupons</span>
                 </a>
-
             </li>
+
+
+            <li>
+                <a href="{{ route('classes.index') }}"
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg
+                    {{ request()->routeIs('classes.*') ? 'bg-primary bg-opacity-20 text-primary' : 'hover:bg-gray-700 text-gray-300 hover:text-white' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="M2 4.5A2.5 2.5 0 0 1 4.5 2h11A2.5 2.5 0 0 1 18 4.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 15.5v-11ZM4.5 3A1.5 1.5 0 0 0 3 4.5v11A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 15.5 3h-11Zm2 3.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1Zm0 3.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>Classes</span>
+                </a>
+            </li>
+
         </ul>
     </nav>
 

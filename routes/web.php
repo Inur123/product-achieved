@@ -3,12 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ClassController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\AllProductController;
+use App\Http\Controllers\ClassModelController;
 use App\Http\Controllers\ItemDetailController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AllProductPromoController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\AdminTransactionController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 //detail product
 Route::get('/product/{slug}', [ItemDetailController::class, 'index'])->name('item-detail');
+Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
 //all product
 Route::get('/all-product', [AllProductController::class, 'index'])->name('all-product');
 //all product promo
@@ -87,5 +90,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('promotions', PromotionController::class);
     Route::resource('coupons', CouponController::class);
+    Route::resource('classes', ClassModelController::class);
 });
 

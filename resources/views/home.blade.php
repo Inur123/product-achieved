@@ -261,82 +261,27 @@
 
                 <div class="lg:w-7/12 order-1 lg:order-2">
                     <div class="animate-fadeInLeft">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Silver Plan -->
-                            <div
-                                class="bg-gradient-to-r from-secondary_program to-primary_program p-6 rounded-lg shadow-md">
-                                <span class="font-bold text-blue-500 text-lg">Silver</span>
-                                <br>
-                                <h6 class="text-base font-semibold mt-2">3 Months Class</h6>
-                                <p class="mt-2 text-gray-700">
-                                    40 Total Meetings for All Skills
-                                    <br>
-                                    3x meetings weekly
-                                    <br>
-                                    Start From IDR. 200K
-                                </p>
-                            </div>
-
-                            <!-- Gold Plan -->
-                            <div
-                                class="bg-gradient-to-r from-secondary_program to-primary_program p-6 rounded-lg shadow-md">
-                                <span class="font-bold text-blue-500 text-lg">Gold</span>
-                                <br>
-                                <h6 class="text-base font-semibold mt-2">2 Months Class</h6>
-                                <p class="mt-2 text-gray-700">
-                                    40 Total Meetings for All Skills
-                                    <br>
-                                    5x meetings weekly
-                                    <br>
-                                    Start From IDR. 300K
-                                </p>
-                            </div>
-
-                            <!-- Platinum Plan -->
-                            <div
-                                class="bg-gradient-to-r from-secondary_program to-primary_program p-6 rounded-lg shadow-md">
-                                <span class="font-bold text-blue-500 text-lg">Platinum</span>
-                                <br>
-                                <h6 class="text-base font-semibold mt-2">A Month Class</h6>
-                                <p class="mt-2 text-gray-700">
-                                    40 Total Meetings for All Skills
-                                    <br>
-                                    10x meetings weekly
-                                    <br>
-                                    Start From IDR. 400K
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Private Plan -->
-                        <div
-                            class="bg-gradient-to-r from-secondary_program to-primary_program p-6 rounded-lg shadow-md mt-4">
-                            <div class="flex flex-col md:flex-row">
-                                <div class="md:w-1/2">
-                                    <span class="font-bold text-blue-500 text-lg">Private</span>
-                                    <br>
-                                    <h6 class="text-base font-semibold mt-2">A Month Class</h6>
-                                    <p class="mt-2 text-gray-700">
-                                        40 Total Meetings for All Skills
-                                        <br>
-                                        10x meetings weekly
-                                        <br>
-                                        Start From IDR. 600K
+                        <!-- Classes Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach($classes as $class)
+                                <div class="bg-gradient-to-r from-secondary_program to-primary_program p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <h3 class="font-bold text-blue-500 text-lg mb-3">{{ $class->title }}</h3>
+                                    <p class="text-gray-100 line-clamp-3">
+                                       {!! $class->excerpt !!}
                                     </p>
+                                    <div class="mt-4">
+                                        <a href="{{ route('class.detail', ['id' => $class->id]) }}" class="text-blue-500 font-medium hover:underline">View Details →</a>
+                                    </div>
                                 </div>
-                                <div class="md:w-1/2 mt-4 md:mt-0">
-                                    <ul class="space-y-1">
-                                        <li class="text-gray-700">Guided by experienced tutors</li>
-                                        <li class="text-gray-700">Get learning modules and videos</li>
-                                        <li class="text-gray-700">Interactive Class</li>
-                                        <li class="text-gray-700">Free scoring</li>
-                                        <li class="text-gray-700">Limited only 7 students</li>
-                                        <li class="text-gray-700">60 minutes/meeting</li>
-                                        <li class="text-gray-700">40 total meetings for all skills</li>
-                                    </ul>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
+
+                        <!-- Pagination -->
+                        @if($classes->hasPages())
+                            <div class="mt-8 flex justify-center">
+                                {{ $classes->links('pagination::tailwind') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
